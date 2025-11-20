@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book a Meeting - Aidaddy</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #7c3aed;
+            --accent: #06d6a0;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --bg-light: #f8fafc;
+            --white: #ffffff;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            color: var(--text-dark);
+            line-height: 1.6;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .logo i {
+            font-size: 2.5rem;
+        }
+
+        .back-link {
+            color: var(--text-light);
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .back-link:hover {
+            color: var(--primary);
+        }
+
+        /* Booking Card */
+        .booking-card {
+            background: var(--white);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            margin-top: 40px;
+        }
+
+        .booking-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 50px 40px 40px;
+            text-align: center;
+            position: relative;
+        }
+
+        .booking-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="booking-pattern" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23booking-pattern)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .booking-icon {
+            width: 100px;
+            height: 100px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            font-size: 40px;
+            color: white;
+            backdrop-filter: blur(10px);
+            border: 3px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .booking-header h1 {
+            color: white;
+            font-size: 32px;
+            font-weight: 700;
+            margin: 0 0 15px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .booking-subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 18px;
+            margin: 0;
+            position: relative;
+            z-index: 1;
+        }
+
+        .booking-body {
+            padding: 40px;
+        }
+
+        .booking-features {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 35px;
+            padding: 25px;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            border-radius: 15px;
+            border: 1px solid #e5e7eb;
+        }
+
+        .feature-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            color: #64748b;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .feature-item i {
+            font-size: 28px;
+            color: #667eea;
+        }
+
+        .booking-form {
+            background: white;
+            padding: 0;
+            border-radius: 15px;
+            box-shadow: none;
+        }
+
+        .form-group {
+            margin-bottom: 30px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: #374151;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 16px;
+        }
+
+        .form-group label i {
+            color: #667eea;
+            font-size: 18px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 18px 20px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #f9fafb;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            background: white;
+        }
+
+        .form-group input::placeholder {
+            color: #9ca3af;
+        }
+
+        .booking-submit-btn {
+            width: 100%;
+            padding: 20px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 20px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .booking-submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .booking-submit-btn i {
+            font-size: 20px;
+        }
+
+        .booking-submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Modal Styles for Success/Error */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal-content {
+            background-color: var(--white);
+            margin: 15% auto;
+            border: none;
+            width: 90%;
+            max-width: 450px;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s ease-out;
+            overflow: hidden;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .modal-header h3 {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .modal-body {
+            padding: 30px;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        .modal-body .icon {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .icon-success {
+            color: #10b981;
+        }
+
+        .icon-error {
+            color: #ef4444;
+        }
+
+        .modal-footer {
+            padding: 20px 30px;
+            text-align: center;
+            border-top: 1px solid #e5e7eb;
+            background: #f8fafc;
+        }
+
+        .btn-modal {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-modal:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        /* Loading state */
+        .loading {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .loading::after {
+            content: '';
+            width: 16px;
+            height: 16px;
+            border: 2px solid #ffffff;
+            border-top: 2px solid transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Calendar Styles */
+        #calendar-container {
+            margin-top: 10px;
+        }
+
+        #calendar-loading {
+            text-align: center;
+            padding: 40px;
+            color: #64748b;
+            font-size: 16px;
+        }
+
+        #calendar-view {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .calendar-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .calendar-nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .calendar-nav-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .calendar-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0;
+        }
+
+        .view-toggle {
+            display: flex;
+            gap: 5px;
+            margin-top: 10px;
+        }
+
+        .view-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .view-btn.active {
+            background: rgba(255, 255, 255, 0.4);
+            font-weight: 600;
+        }
+
+        .view-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .calendar-week {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            /* Changed from 5 to 7 columns */
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .calendar-day {
+            padding: 15px 10px;
+            text-align: center;
+            background: #f8fafc;
+            border-right: 1px solid #e5e7eb;
+        }
+
+        .calendar-day:last-child {
+            border-right: none;
+        }
+
+        .day-name {
+            font-weight: 600;
+            color: #374151;
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+        .day-date {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .calendar-slots {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            /* Changed from 5 to 7 columns for week/month views */
+        }
+
+        .day-slots {
+            border-right: 1px solid #e5e7eb;
+        }
+
+        .day-slots:last-child {
+            border-right: none;
+        }
+
+        .time-slot {
+            padding: 12px 8px;
+            text-align: center;
+            border-bottom: 1px solid #f3f4f6;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 13px;
+            font-weight: 500;
+            position: relative;
+        }
+
+        .time-slot.available {
+            background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+
+        .time-slot.available:hover {
+            background: linear-gradient(135deg, #a7f3d0 0%, #6ee7b7 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+        }
+
+        .time-slot.available.selected {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            box-shadow: 0 0 0 2px #10b981;
+        }
+
+        .time-slot.booked {
+            background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+            color: #991b1b;
+            border: 1px solid #ef4444;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        .time-slot.booked::after {
+            content: '×';
+            position: absolute;
+            top: 2px;
+            right: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .time-slot.unavailable {
+            background: #f3f4f6;
+            color: #9ca3af;
+            border: 1px solid #e5e7eb;
+            cursor: not-allowed;
+        }
+
+        .time-slot.today {
+            border: 2px solid #3b82f6;
+        }
+
+        .month-slot {
+            padding: 20px 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            min-height: 60px;
+        }
+
+        .month-day {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 2px;
+        }
+
+        .month-availability {
+            font-size: 11px;
+            font-weight: 500;
+            text-align: center;
+        }
+
+        .calendar-day.today {
+            background: #dbeafe;
+            border: 2px solid #3b82f6;
+        }
+
+        .calendar-day.today .day-name,
+        .calendar-day.today .day-date {
+            color: #1e40af;
+            font-weight: 700;
+        }
+
+        .selected-slot {
+            margin-top: 15px;
+            padding: 15px;
+            background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+            border: 2px solid #3b82f6;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #1e40af;
+            font-weight: 600;
+        }
+
+        .selected-slot i {
+            color: #10b981;
+            font-size: 18px;
+        }
+
+        /* Legend */
+        .calendar-legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 8px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .legend-available {
+            width: 16px;
+            height: 16px;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            border-radius: 3px;
+        }
+
+        .legend-booked {
+            width: 16px;
+            height: 16px;
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            border-radius: 3px;
+            position: relative;
+        }
+
+        .legend-booked::after {
+            content: '×';
+            position: absolute;
+            top: -2px;
+            right: 1px;
+            font-size: 10px;
+            color: white;
+            font-weight: bold;
+        }
+
+        /* Responsive Calendar */
+        @media (max-width: 768px) {
+
+            .calendar-week,
+            .calendar-slots {
+                grid-template-columns: 1fr;
+            }
+
+            .calendar-day,
+            .day-slots {
+                border-right: none;
+                border-bottom: 1px solid #e5e7eb;
+            }
+
+            .time-slot {
+                padding: 15px 10px;
+                font-size: 14px;
+            }
+
+            .month-slot {
+                padding: 25px 10px;
+                min-height: 70px;
+            }
+
+            .month-day {
+                font-size: 20px;
+            }
+
+            .month-availability {
+                font-size: 12px;
+            }
+
+            .calendar-nav {
+                flex-direction: column;
+                gap: 15px;
+                align-items: center;
+            }
+
+            .calendar-nav-buttons {
+                order: 2;
+            }
+
+            .calendar-title {
+                order: 1;
+                font-size: 16px;
+            }
+
+            .view-toggle {
+                order: 3;
+            }
+
+            .calendar-legend {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="/" class="logo">
+                <i class="fas fa-brain"></i> Aidaddy
+            </a>
+            <a href="/" class="back-link">
+                <i class="fas fa-arrow-left"></i>
+                Back to Home
+            </a>
+        </div>
+
+        <div class="booking-card">
+            <div class="booking-header">
+                <div class="booking-icon">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <h1>Book Your AI Consultation</h1>
+                <p class="booking-subtitle">Schedule a 30-minute session with our AI experts</p>
+            </div>
+
+            <div class="booking-body">
+                <div class="booking-features">
+                    <div class="feature-item">
+                        <i class="fas fa-clock"></i>
+                        <span>30-minute session</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-user-tie"></i>
+                        <span>Expert consultation</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-video"></i>
+                        <span>Online meeting</span>
+                    </div>
+                </div>
+
+                <form id="booking-form" class="booking-form">
+                    <div class="form-group">
+                        <label for="booking-name">
+                            <i class="fas fa-user"></i>
+                            Full Name
+                        </label>
+                        <input type="text" id="booking-name" name="name" placeholder="Enter your full name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="booking-email">
+                            <i class="fas fa-envelope"></i>
+                            Email Address
+                        </label>
+                        <input type="email" id="booking-email" name="email" placeholder="your.email@example.com"
+                            required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="time-slot">
+                            <i class="fas fa-calendar-alt"></i>
+                            Select Time Slot
+                        </label>
+                        <div id="calendar-container">
+                            <div id="calendar-loading">Loading calendar...</div>
+                            <div id="calendar-view" style="display: none;"></div>
+                        </div>
+                        <input type="hidden" id="selected-datetime" name="datetime" required>
+                        <div id="selected-slot-display" class="selected-slot" style="display: none;">
+                            <i class="fas fa-check-circle"></i>
+                            <span id="selected-slot-text"></span>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="submit-btn" class="booking-submit-btn">
+                        <i class="fas fa-calendar-plus"></i>
+                        <span id="btn-text">Book My Meeting</span>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success/Error Modal -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Notification</h3>
+            </div>
+            <div class="modal-body">
+                <div id="modal-icon"></div>
+                <p id="modal-message"></p>
+            </div>
+            <div class="modal-footer">
+                <button id="modal-btn" class="btn-modal">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Modal functions
+        function showModal(title, message, type = 'info', callback = null) {
+            const modal = document.getElementById('modal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalIcon = document.getElementById('modal-icon');
+            const modalMessage = document.getElementById('modal-message');
+            const modalBtn = document.getElementById('modal-btn');
+
+            modalTitle.textContent = title;
+            modalMessage.textContent = message;
+
+            // Clear previous icon
+            modalIcon.innerHTML = '';
+
+            // Set icon and button style based on type
+            if (type === 'success') {
+                modalIcon.innerHTML = '<i class="fas fa-check-circle icon icon-success"></i>';
+            } else if (type === 'error') {
+                modalIcon.innerHTML = '<i class="fas fa-times-circle icon icon-error"></i>';
+            } else {
+                modalIcon.innerHTML = '<i class="fas fa-info-circle icon" style="color: #667eea;"></i>';
+            }
+
+            modal.style.display = 'block';
+
+            modalBtn.onclick = function () {
+                modal.style.display = 'none';
+                if (callback) callback();
+            };
+
+            // Close modal when clicking outside
+            window.onclick = function (event) {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                    if (callback) callback();
+                }
+            };
+        }
+
+        // Global variables for calendar state
+        let currentViewMode = 'week'; // 'week' or 'month' - Default to week view
+        let currentStartDate = new Date();
+
+        // Load available slots and render calendar
+        async function loadTimeSlots(startDate = null) {
+            if (startDate) {
+                currentStartDate = new Date(startDate);
+            }
+
+            const calendarContainer = document.getElementById('calendar-container');
+            const loadingDiv = document.getElementById('calendar-loading');
+            const calendarView = document.getElementById('calendar-view');
+
+            if (!calendarContainer || !loadingDiv || !calendarView) {
+                console.error('Calendar DOM elements not found');
+                return;
+            }
+
+            try {
+                loadingDiv.style.display = 'block';
+                loadingDiv.innerHTML = 'Loading calendar...';
+                calendarView.style.display = 'none';
+
+                const response = await fetch('/api/available-slots');
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                const slots = data.slots;
+
+                if (!slots || !Array.isArray(slots)) {
+                    throw new Error('Invalid API response format');
+                }
+
+                // Group slots by day
+                const slotsByDay = {};
+                slots.forEach(slot => {
+                    if (!slotsByDay[slot.day]) {
+                        slotsByDay[slot.day] = [];
+                    }
+                    slotsByDay[slot.day].push(slot);
+                });
+
+                // Generate days based on current view mode
+                const days = generateCalendarDays(slotsByDay);
+
+                renderCalendar(days);
+
+                loadingDiv.style.display = 'none';
+                calendarView.style.display = 'block';
+
+            } catch (error) {
+                console.error('Error loading slots:', error);
+                loadingDiv.innerHTML = `<div style="color: #ef4444; font-weight: 600;">Error loading slots: ${error.message}. <button onclick="loadTimeSlots()" style="background: #3b82f6; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer; margin-left: 10px;">Retry</button></div>`;
+            }
+        }
+
+        // Generate calendar days based on view mode
+        function generateCalendarDays(slotsByDay) {
+            const days = [];
+            let numDays;
+            let startDate = new Date(currentStartDate);
+
+            if (currentViewMode === 'week') {
+                numDays = 7; // Show full 7 days for week view
+                // Start from Monday of the current week
+                const dayOfWeek = startDate.getDay();
+                const diff = startDate.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1); // Adjust for Sunday
+                startDate.setDate(diff);
+            } else {
+                numDays = 35; // 5 weeks for month view
+                // Start from the 1st of the current month
+                startDate = new Date(startDate.getFullYear(), startDate.getMonth(), 1);
+            }
+
+            for (let i = 0; i < numDays; i++) {
+                const date = new Date(startDate);
+                date.setDate(startDate.getDate() + i);
+
+                // Validate the date
+                if (isNaN(date.getTime())) {
+                    console.error('Invalid date generated:', date, 'from startDate:', startDate, 'with offset:', i);
+                    continue;
+                }
+
+                const dayName = date.toLocaleDateString('en-US', { weekday: 'long' });
+                const dayShort = date.toLocaleDateString('en-US', { weekday: 'short' });
+
+                // Create date string safely
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0');
+                const day = String(date.getDate()).padStart(2, '0');
+                const dateStr = `${year}-${month}-${day}`;
+
+                days.push({
+                    full: dayName,
+                    short: dayShort,
+                    date: dateStr,
+                    slots: slotsByDay[dayName] || []
+                });
+            }
+
+            return days;
+        }
+
+        // Render calendar with slots
+        function renderCalendar(days) {
+            const calendarView = document.getElementById('calendar-view');
+
+            // Generate title based on view mode
+            let title, prevDisabled = false, nextDisabled = false;
+            const today = new Date();
+
+            if (currentViewMode === 'week') {
+                const weekStart = new Date(currentStartDate);
+                const weekEnd = new Date(currentStartDate);
+                weekEnd.setDate(weekStart.getDate() + 6);
+                title = `${weekStart.toLocaleDateString('en-US', { month: 'long', year: 'numeric' })} - Week of ${weekStart.getDate()}`;
+                prevDisabled = weekStart <= today;
+            } else {
+                const monthName = currentStartDate.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+                title = monthName;
+                const currentMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+                prevDisabled = currentStartDate <= currentMonth;
+            }
+
+            // Calendar header with navigation
+            let html = `
+                <div class="calendar-header">
+                    <div class="calendar-nav">
+                        <div class="calendar-nav-buttons">
+                            <button class="nav-btn" id="prev-btn" ${prevDisabled ? 'disabled' : ''}>
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+                            <button class="nav-btn" id="today-btn">Today</button>
+                            <button class="nav-btn" id="next-btn">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+                        <h3 class="calendar-title">${title}</h3>
+                        <div class="view-toggle">
+                            <button class="view-btn ${currentViewMode === 'week' ? 'active' : ''}" data-view="week">Week</button>
+                            <button class="view-btn ${currentViewMode === 'month' ? 'active' : ''}" data-view="month">Month</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="calendar-week">
+            `;
+
+            // Day headers
+            days.forEach(day => {
+                try {
+                    const date = new Date(day.date + 'T00:00:00'); // Add time to ensure valid parsing
+                    const isToday = date.toDateString() === today.toDateString();
+                    const dayClass = isToday ? 'calendar-day today' : 'calendar-day';
+
+                    html += `
+                        <div class="${dayClass}">
+                            <div class="day-name">${day.short}</div>
+                            <div class="day-date">${date.getDate()}</div>
+                        </div>
+                    `;
+                } catch (error) {
+                    console.error('Error creating date for day:', day, error);
+                    html += `
+                        <div class="calendar-day">
+                            <div class="day-name">${day.short}</div>
+                            <div class="day-date">?</div>
+                        </div>
+                    `;
+                }
+            });
+
+            html += `</div><div class="calendar-slots">`;
+
+            // Get all unique time slots across days (only for week view)
+            if (currentViewMode === 'week') {
+                const allTimes = new Set();
+                days.forEach(day => {
+                    day.slots.forEach(slot => allTimes.add(slot.time));
+                });
+                const sortedTimes = Array.from(allTimes).sort();
+
+                // Render time slots for each day
+                sortedTimes.forEach(time => {
+                    days.forEach(day => {
+                        const slot = day.slots.find(s => s.time === time);
+                        const isAvailable = slot && slot.available;
+                        const isBooked = slot && slot.booked;
+                        const datetime = slot ? slot.datetime : `${day.date}T${time}`;
+
+                        let slotClass = 'time-slot';
+                        let slotText = time;
+
+                        if (isAvailable) {
+                            slotClass += ' available';
+                        } else if (isBooked) {
+                            slotClass += ' booked';
+                            slotText += ' (Booked)';
+                        } else {
+                            slotClass += ' booked'; // Default to booked if no slot data
+                            slotText += ' (Unavailable)';
+                        }
+
+                        html += `
+                            <div class="${slotClass}" data-datetime="${datetime}" data-available="${isAvailable}">
+                                ${slotText}
+                            </div>
+                        `;
+                    });
+                });
+            } else {
+                // Month view - show availability summary per day
+                days.forEach(day => {
+                    const availableCount = day.slots.filter(slot => slot.available).length;
+                    const totalCount = day.slots.length;
+                    let date, isToday = false;
+
+                    try {
+                        date = new Date(day.date + 'T00:00:00'); // Add time to ensure valid parsing
+                        isToday = date.toDateString() === today.toDateString();
+                    } catch (error) {
+                        console.error('Error creating date for month view day:', day, error);
+                        date = new Date(); // Fallback
+                    }
+
+                    let slotClass = 'time-slot month-slot';
+                    let slotText = '';
+
+                    if (availableCount > 0) {
+                        slotClass += ' available';
+                        slotText = `${availableCount} slots`;
+                    } else if (totalCount > 0) {
+                        slotClass += ' booked';
+                        slotText = 'Booked';
+                    } else {
+                        slotClass += ' unavailable';
+                        slotText = 'No slots';
+                    }
+
+                    if (isToday) {
+                        slotClass += ' today';
+                    }
+
+                    html += `
+                        <div class="${slotClass}" data-date="${day.date}" data-available="${availableCount > 0}">
+                            <div class="month-day">${date.getDate()}</div>
+                            <div class="month-availability">${slotText}</div>
+                        </div>
+                    `;
+                });
+            }
+
+            html += `</div></div>`;
+
+            // Legend
+            html += `
+                <div class="calendar-legend">
+                    <div class="legend-item">
+                        <div class="legend-available"></div>
+                        <span>Available</span>
+                    </div>
+                    <div class="legend-item">
+                        <div class="legend-booked"></div>
+                        <span>Booked</span>
+                    </div>
+                </div>
+            `;
+
+            calendarView.innerHTML = html;
+
+            // Add event listeners
+            setupCalendarEventListeners();
+        }
+
+        // Setup event listeners for calendar navigation
+        function setupCalendarEventListeners() {
+            // Navigation buttons
+            document.getElementById('prev-btn').addEventListener('click', () => {
+                navigateCalendar(-1);
+            });
+
+            document.getElementById('next-btn').addEventListener('click', () => {
+                navigateCalendar(1);
+            });
+
+            document.getElementById('today-btn').addEventListener('click', () => {
+                currentStartDate = new Date();
+                loadTimeSlots();
+            });
+
+            // View toggle buttons
+            document.querySelectorAll('.view-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const newView = e.target.dataset.view;
+                    if (newView !== currentViewMode) {
+                        currentViewMode = newView;
+                        currentStartDate = new Date(); // Reset to today when switching views
+                        loadTimeSlots();
+                    }
+                });
+            });
+
+            // Slot selection (only for week view)
+            if (currentViewMode === 'week') {
+                document.querySelectorAll('.time-slot.available').forEach(slot => {
+                    slot.addEventListener('click', function () {
+                        selectTimeSlot(this.dataset.datetime);
+                    });
+                });
+            } else {
+                // Month view - clicking on a day should switch to week view for that day
+                document.querySelectorAll('.month-slot.available').forEach(slot => {
+                    slot.addEventListener('click', function () {
+                        try {
+                            const date = new Date(this.dataset.date + 'T00:00:00');
+                            currentViewMode = 'week';
+                            currentStartDate = new Date(date);
+                            loadTimeSlots();
+                        } catch (error) {
+                            console.error('Error parsing date in month view click:', this.dataset.date, error);
+                        }
+                    });
+                });
+            }
+        }
+
+        // Navigate calendar (direction: -1 for previous, 1 for next)
+        function navigateCalendar(direction) {
+            if (currentViewMode === 'week') {
+                currentStartDate.setDate(currentStartDate.getDate() + (direction * 7));
+            } else {
+                currentStartDate.setMonth(currentStartDate.getMonth() + direction);
+            }
+            loadTimeSlots();
+        }
+
+        // Select a time slot
+        function selectTimeSlot(datetime) {
+            // Remove previous selection
+            document.querySelectorAll('.time-slot.selected').forEach(slot => {
+                slot.classList.remove('selected');
+            });
+
+            // Add selection to clicked slot
+            const clickedSlot = document.querySelector(`[data-datetime="${datetime}"]`);
+            if (clickedSlot) {
+                clickedSlot.classList.add('selected');
+            }
+
+            // Update hidden input and display
+            document.getElementById('selected-datetime').value = datetime;
+            const selectedSlotDiv = document.getElementById('selected-slot-display');
+            const selectedSlotText = document.getElementById('selected-slot-text');
+            const date = new Date(datetime);
+            const timeStr = date.toLocaleTimeString('en-US', {
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+            });
+            const dateStr = date.toLocaleDateString('en-US', {
+                weekday: 'long',
+                month: 'long',
+                day: 'numeric'
+            });
+
+            selectedSlotText.textContent = `${dateStr} at ${timeStr}`;
+            selectedSlotDiv.style.display = 'flex';
+        }
+
+        // Handle form submission
+        document.getElementById('booking-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const submitBtn = document.getElementById('submit-btn');
+            const btnText = document.getElementById('btn-text');
+
+            // Disable button and show loading
+            submitBtn.disabled = true;
+            btnText.innerHTML = '<span class="loading">Booking...</span>';
+
+            const formData = new FormData(this);
+            const data = {
+                name: formData.get('name'),
+                email: formData.get('email'),
+                datetime: formData.get('datetime')
+            };
+
+            // Validate that a time slot is selected
+            if (!data.datetime) {
+                showModal('Selection Required', 'Please select a time slot from the calendar.', 'error');
+                return;
+            }
+
+            try {
+                const response = await fetch('/book-meeting', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (response.ok) {
+                    showModal('Meeting Booked!', result.message, 'success', () => {
+                        window.location.href = '/';
+                    });
+                } else {
+                    showModal('Booking Failed', result.message || 'Please try again.', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showModal('Error', 'Failed to book meeting. Please try again.', 'error');
+            } finally {
+                // Re-enable button
+                submitBtn.disabled = false;
+                btnText.textContent = 'Book My Meeting';
+            }
+        });
+
+        // Load time slots when page loads
+        document.addEventListener('DOMContentLoaded', loadTimeSlots);
+    </script>
+</body>
+
+</html>
