@@ -1161,6 +1161,7 @@
     </footer>
 
     <script>
+        const BACKEND_URL = '';
         // Simple script for smooth scrolling
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
@@ -1513,12 +1514,14 @@
                 });
         });
 
-        // Keep service alive by pinging every 14 minutes
+        // Keep service alive by pinging every 2 minutes
         setInterval(() => {
-            fetch("https://your-service.onrender.com");
-        }, 14 * 60 * 1000); // 14 minutes
+            fetch(BACKEND_URL, { mode: 'no-cors', credentials: 'omit' }).catch(() => { });
+        }, 2 * 60 * 1000); // 2 minutes
+
 
     </script>
 </body>
+
 
 </html>
