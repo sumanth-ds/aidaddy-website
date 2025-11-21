@@ -1155,7 +1155,7 @@
                 </div>
             </div>
             <div class="copyright">
-                <p>&copy; 2025-2026 Aidaddy.in. All rights reserved.</p>
+                <p>&copy; 2023 Aidaddy.in. All rights reserved.</p>
             </div>
         </div>
     </footer>
@@ -1207,7 +1207,7 @@
             });
         });
 
-        // Contact form submission (uses build-time BACKEND_URL)
+        // Contact form submission
         document.getElementById('contact-form').addEventListener('submit', function (e) {
             e.preventDefault();
             const formData = new FormData(this);
@@ -1216,7 +1216,7 @@
                 email: formData.get('email'),
                 message: formData.get('message')
             };
-            fetch(`${BACKEND_URL}/contact`, {
+            fetch('/contact', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -1411,7 +1411,7 @@
             });
         }
 
-        // Update contact form to use beautiful modals with better error handling
+        // Update contact form to use beautiful modals
         document.getElementById('contact-form').addEventListener('submit', function (e) {
             e.preventDefault();
             const formData = new FormData(this);
@@ -1423,47 +1423,26 @@
 
             showModal('Sending...', 'Please wait while we send your message...', 'info');
 
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
-
-            fetch(`${BACKEND_URL}/contact`, {
+            fetch('/contact', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify(data),
-                signal: controller.signal,
-                credentials: 'omit',
-                mode: 'cors'
             })
-                .then(response => {
-                    clearTimeout(timeoutId);
-                    if (!response.ok) {
-                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                    }
-                    return response.json();
-                })
+                .then(response => response.json())
                 .then(data => {
-                    if (data.message && data.message.toLowerCase().includes('thank you')) {
+                    if (data.message.includes('Thank you')) {
                         showModal('Success!', data.message, 'success', () => {
-                            document.getElementById('contact-form').reset();
-                        });
-                    } else if (data.message) {
-                        showModal('Message Sent', data.message, 'success', () => {
-                            document.getElementById('contact-form').reset();
+                            this.reset();
                         });
                     } else {
-                        showModal('Error', 'Unexpected response from server.', 'error');
+                        showModal('Error', data.message, 'error');
                     }
                 })
                 .catch(error => {
-                    clearTimeout(timeoutId);
-                    console.error('Contact form error:', error);
-                    if (error.name === 'AbortError') {
-                        showModal('Timeout', 'Request took too long. Please check your connection and try again.', 'error');
-                    } else {
-                        showModal('Connection Error', `Failed to send message: ${error.message}. Make sure the backend is running.`, 'error');
-                    }
+                    console.error('Error:', error);
+                    showModal('Error', 'An error occurred. Please try again.', 'error');
                 });
         });
 
@@ -1473,7 +1452,7 @@
             modal.style.display = 'block';
 
             // Load available time slots
-            fetch(`${BACKEND_URL}/api/available-slots`)
+            fetch('/api/available-slots')
                 .then(response => response.json())
                 .then(data => {
                     const select = document.getElementById('time-slot');
@@ -1512,7 +1491,7 @@
             document.getElementById('booking-modal').style.display = 'none';
             showModal('Booking Meeting...', 'Please wait while we schedule your meeting...', 'info');
 
-            fetch(`${BACKEND_URL}/book-meeting`, {
+            fetch('/book-meeting', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -1535,10 +1514,11 @@
                 });
         });
 
-        // Keep service alive by pinging every 2 minutes (for testing)
+        // Keep service alive by pinging every 2 minutes
         setInterval(() => {
             fetch(BACKEND_URL, { mode: 'no-cors', credentials: 'omit' }).catch(() => { });
         }, 2 * 60 * 1000); // 2 minutes
+
 
     </script>
 </body>

@@ -1,0 +1,26 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "frontend/templates/**/*",
+      "use": "@vercel/static"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "https://aidaddy-backend.onrender.com/api/$1"
+    },
+    {
+      "src": "/contact",
+      "dest": "https://aidaddy-backend.onrender.com/contact"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/frontend/templates/$1"
+    }
+  ],
+  "env": {
+    "BACKEND_URL": "https://aidaddy-backend.onrender.com"
+  }
+}
