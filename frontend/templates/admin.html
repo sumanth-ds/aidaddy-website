@@ -1013,7 +1013,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for contact in contacts.items %}
+                            {% for contact in contacts %}
                             <tr>
                                 <td>{{ contact.id }}</td>
                                 <td>{{ contact.name }}</td>
@@ -1077,7 +1077,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% for meeting in meetings.items %}
+                        {% for meeting in meetings %}
                         <tr>
                             <td>{{ meeting.id }}</td>
                             <td>{{ meeting.name }}</td>
@@ -1156,7 +1156,7 @@
                 </div>
                 {% endif %}
 
-                {% if not meetings.items %}
+                {% if not meetings %}
                 <p style="text-align: center; color: #666;">No meetings scheduled.</p>
                 {% endif %}
             </div>

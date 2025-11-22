@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 import os
 from datetime import datetime, timedelta
 import uuid
+from bson import ObjectId
 
 class Pagination:
     def __init__(self, page, per_page, total):
@@ -97,9 +98,24 @@ def contact():
     else:
         return jsonify({"message": "Your message has been saved. We will contact you soon."})
 
-@app.route('/get-started')
-def get_started():
-    return render_template('booking.html')
+@app.route('/debug/db')
+def debug_db():
+    contacts = []
+    for contact in mongo.db.contacts.find().limit(5):
+        contact['_id'] = str(contact['_id'])
+        contacts.append(contact)
+    
+    meetings = []
+    for meeting in mongo.db.meetings.find().limit(5):
+        meeting['_id'] = str(meeting['_id'])
+        meetings.append(meeting)
+    
+    return jsonify({
+        'contacts_count': mongo.db.contacts.count_documents({}),
+        'meetings_count': mongo.db.meetings.count_documents({}),
+        'contacts': contacts,
+        'meetings': meetings
+    })
 
 @app.route('/api/available-slots')
 def get_available_slots():
@@ -157,13 +173,14 @@ def book_meeting():
             return jsonify({"message": "This time slot is no longer available. Please choose another time."}), 400
         
         # Save meeting request to database (without meeting link)
-        mongo.db.meetings.insert_one({
+        result = mongo.db.meetings.insert_one({
             "name": name,
             "email": email,
             "meeting_datetime": meeting_datetime,
             "meeting_link": "",  # Will be provided later by admin
             "status": "pending"  # Status indicates waiting for meeting link
         })
+        print(f"Meeting inserted with ID: {result.inserted_id}")
         
         # Send meeting request email to company only
         email_sent = False
@@ -204,6 +221,7 @@ def logout():
 @app.route('/admin')
 @login_required
 def admin():
+    print("Admin route called")
     page = request.args.get('page', 1, type=int)
     per_page = 10
     search = request.args.get('search', '')
@@ -220,14 +238,21 @@ def admin():
     
     contacts_cursor = mongo.db.contacts.find(query).skip((page-1)*per_page).limit(per_page)
     contacts = list(contacts_cursor)
+    print(f"Fetched {len(contacts)} contacts for admin")
     total_contacts = mongo.db.contacts.count_documents(query)
+    print(f"Total contacts in DB: {total_contacts}")
     contacts_pagination = Pagination(page, per_page, total_contacts)
     
     # Get meetings data
     meetings_page = request.args.get('meetings_page', 1, type=int)
     meetings_cursor = mongo.db.meetings.find().sort("meeting_datetime", -1).skip((meetings_page-1)*per_page).limit(per_page)
-    meetings = list(meetings_cursor)
+    meetings = []
+    for meeting in meetings_cursor:
+        meeting['id'] = str(meeting['_id'])
+        meetings.append(meeting)
+    print(f"Fetched {len(meetings)} meetings for admin")
     total_meetings = mongo.db.meetings.count_documents({})
+    print(f"Total meetings in DB: {total_meetings}")
     meetings_pagination = Pagination(meetings_page, per_page, total_meetings)
     
     return render_template('admin.html', 
@@ -237,7 +262,7 @@ def admin():
                          contacts_pagination=contacts_pagination,
                          meetings_pagination=meetings_pagination)
 
-@app.route('/admin/meeting/<int:meeting_id>/provide-link', methods=['POST'])
+@app.route('/admin/meeting/<meeting_id>/provide-link', methods=['POST'])
 @login_required
 def provide_meeting_link(meeting_id):
     data = request.json
@@ -247,13 +272,13 @@ def provide_meeting_link(meeting_id):
         return jsonify({"message": "Meeting link is required."}), 400
     
     try:
-        meeting = mongo.db.meetings.find_one({"_id": meeting_id})
+        meeting = mongo.db.meetings.find_one({"_id": ObjectId(meeting_id)})
         if not meeting:
             return jsonify({"message": "Meeting not found."}), 404
         
         # Update meeting with link and change status
         mongo.db.meetings.update_one(
-            {"_id": meeting_id},
+            {"_id": ObjectId(meeting_id)},
             {"$set": {"meeting_link": meeting_link, "status": "scheduled"}}
         )
         
@@ -313,7 +338,7 @@ The client has been notified via email."""
         print(f"Failed to provide meeting link: {e}")
         return jsonify({"message": "Failed to provide meeting link. Please try again."}), 500
 
-@app.route('/admin/meeting/<int:meeting_id>/reschedule', methods=['POST'])
+@app.route('/admin/meeting/<meeting_id>/reschedule', methods=['POST'])
 @login_required
 def reschedule_meeting(meeting_id):
     data = request.json
@@ -323,7 +348,7 @@ def reschedule_meeting(meeting_id):
         return jsonify({"message": "New date and time are required."}), 400
     
     try:
-        meeting = mongo.db.meetings.find_one({"_id": meeting_id})
+        meeting = mongo.db.meetings.find_one({"_id": ObjectId(meeting_id)})
         if not meeting:
             return jsonify({"message": "Meeting not found."}), 404
         new_datetime = datetime.fromisoformat(new_datetime_str)
@@ -331,7 +356,7 @@ def reschedule_meeting(meeting_id):
         # Check if the new slot is available
         existing_meeting = mongo.db.meetings.find_one({
             "meeting_datetime": new_datetime,
-            "_id": {"$ne": meeting_id}
+            "_id": {"$ne": ObjectId(meeting_id)}
         })
         
         if existing_meeting:
@@ -339,7 +364,7 @@ def reschedule_meeting(meeting_id):
         
         old_datetime = meeting['meeting_datetime']
         mongo.db.meetings.update_one(
-            {"_id": meeting_id},
+            {"_id": ObjectId(meeting_id)},
             {"$set": {"meeting_datetime": new_datetime}}
         )
         
@@ -349,15 +374,15 @@ def reschedule_meeting(meeting_id):
         print(f"Failed to reschedule meeting: {e}")
         return jsonify({"message": "Failed to reschedule meeting. Please try again."}), 500
 
-@app.route('/admin/meeting/<int:meeting_id>/complete', methods=['POST'])
+@app.route('/admin/meeting/<meeting_id>/complete', methods=['POST'])
 @login_required
 def complete_meeting(meeting_id):
     try:
-        meeting = mongo.db.meetings.find_one({"_id": meeting_id})
+        meeting = mongo.db.meetings.find_one({"_id": ObjectId(meeting_id)})
         if not meeting:
             return jsonify({"message": "Meeting not found."}), 404
         mongo.db.meetings.update_one(
-            {"_id": meeting_id},
+            {"_id": ObjectId(meeting_id)},
             {"$set": {"status": "completed"}}
         )
         
@@ -367,14 +392,14 @@ def complete_meeting(meeting_id):
         print(f"Failed to complete meeting: {e}")
         return jsonify({"message": "Failed to update meeting status. Please try again."}), 500
 
-@app.route('/admin/meeting/<int:meeting_id>/delete', methods=['POST'])
+@app.route('/admin/meeting/<meeting_id>/delete', methods=['POST'])
 @login_required
 def delete_meeting(meeting_id):
     try:
-        meeting = mongo.db.meetings.find_one({"_id": meeting_id})
+        meeting = mongo.db.meetings.find_one({"_id": ObjectId(meeting_id)})
         if not meeting:
             return jsonify({"message": "Meeting not found."}), 404
-        mongo.db.meetings.delete_one({"_id": meeting_id})
+        mongo.db.meetings.delete_one({"_id": ObjectId(meeting_id)})
         
         return jsonify({"message": "Meeting deleted successfully!"})
     
