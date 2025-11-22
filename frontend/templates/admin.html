@@ -1032,15 +1032,16 @@
                             {% endfor %}
                         </tbody>
                     </table>
-                </div> {% if contacts.pages > 1 %}
+                </div> {% if contacts_pagination.pages > 1 %}
                 <div class="pagination">
-                    {% if contacts.has_prev %}
-                    <a href="{{ url_for('admin', page=contacts.prev_num, search=search) }}">&laquo; Previous</a>
+                    {% if contacts_pagination.has_prev %}
+                    <a href="{{ url_for('admin', page=contacts_pagination.prev_num, search=search) }}">&laquo;
+                        Previous</a>
                     {% endif %}
 
-                    {% for page_num in contacts.iter_pages() %}
+                    {% for page_num in contacts_pagination.iter_pages() %}
                     {% if page_num %}
-                    {% if page_num == contacts.page %}
+                    {% if page_num == contacts_pagination.page %}
                     <span class="current">{{ page_num }}</span>
                     {% else %}
                     <a href="{{ url_for('admin', page=page_num, search=search) }}">{{ page_num }}</a>
@@ -1051,7 +1052,7 @@
                     {% endfor %}
 
                     {% if contacts.has_next %}
-                    <a href="{{ url_for('admin', page=contacts.next_num, search=search) }}">Next &raquo;</a>
+                    <a href="{{ url_for('admin', page=contacts_pagination.next_num, search=search) }}">Next &raquo;</a>
                     {% endif %}
                 </div>
                 {% endif %}
@@ -1129,16 +1130,16 @@
                     </tbody>
                 </table>
 
-                {% if meetings.pages > 1 %}
+                {% if meetings_pagination.pages > 1 %}
                 <div class="pagination">
-                    {% if meetings.has_prev %}
-                    <a href="{{ url_for('admin', meetings_page=meetings.prev_num, search=search) }}">&laquo;
+                    {% if meetings_pagination.has_prev %}
+                    <a href="{{ url_for('admin', meetings_page=meetings_pagination.prev_num, search=search) }}">&laquo;
                         Previous</a>
                     {% endif %}
 
-                    {% for page_num in meetings.iter_pages() %}
+                    {% for page_num in meetings_pagination.iter_pages() %}
                     {% if page_num %}
-                    {% if page_num == meetings.page %}
+                    {% if page_num == meetings_pagination.page %}
                     <span class="current">{{ page_num }}</span>
                     {% else %}
                     <a href="{{ url_for('admin', meetings_page=page_num, search=search) }}">{{ page_num }}</a>
@@ -1148,8 +1149,8 @@
                     {% endif %}
                     {% endfor %}
 
-                    {% if meetings.has_next %}
-                    <a href="{{ url_for('admin', meetings_page=meetings.next_num, search=search) }}">Next
+                    {% if meetings_pagination.has_next %}
+                    <a href="{{ url_for('admin', meetings_page=meetings_pagination.next_num, search=search) }}">Next
                         &raquo;</a>
                     {% endif %}
                 </div>

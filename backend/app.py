@@ -1,32 +1,49 @@
 from flask import Flask, render_template, request, jsonify, redirect, url_for, session, flash
 from flask_mail import Mail, Message
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
-from models import db, Contact, Meeting
+from flask_pymongo import PyMongo
 from mail import send_contact_email, send_meeting_email, send_meeting_request_email
 from dotenv import load_dotenv
 import os
 from datetime import datetime, timedelta
 import uuid
 
-load_dotenv()
+class Pagination:
+    def __init__(self, page, per_page, total):
+        self.page = page
+        self.per_page = per_page
+        self.total = total
+        self.pages = (total + per_page - 1) // per_page
+    
+    @property
+    def prev_num(self):
+        return self.page - 1 if self.page > 1 else None
+    
+    @property
+    def next_num(self):
+        return self.page + 1 if self.page < self.pages else None
+    
+    @property
+    def has_prev(self):
+        return self.page > 1
+    
+    @property
+    def has_next(self):
+        return self.page < self.pages
+    
+    def iter_pages(self):
+        left = max(1, self.page - 2)
+        right = min(self.pages + 1, self.page + 3)
+        return range(left, right)
+
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '..', '.env'))
 
 template_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'frontend', 'templates'))
 app = Flask(__name__, template_folder=template_dir)
 
 # Database configuration
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///contacts.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-
-# Email configuration
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
-app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
-app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_USERNAME')
-app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
-
-db.init_app(app)
+app.config['MONGO_URI'] = os.getenv('MONGODB_URI')
+mongo = PyMongo(app)
 mail = Mail(app)
 
 # Login manager
@@ -62,9 +79,12 @@ def contact():
         send_contact_email(mail, name, email, message)
         
         # Only save to database if email was sent successfully
-        new_contact = Contact(name=name, email=email, message=message)
-        db.session.add(new_contact)
-        db.session.commit()
+        mongo.db.contacts.insert_one({
+            "name": name,
+            "email": email,
+            "message": message,
+            "timestamp": datetime.utcnow()
+        })
         
         return jsonify({"message": "Thank you for contacting us! We will get back to you soon."})
     
@@ -96,7 +116,7 @@ def get_available_slots():
             slot_time = datetime.combine(current_date, datetime.min.time().replace(hour=hour))
 
             # Check if slot is already booked
-            existing_meeting = Meeting.query.filter_by(meeting_datetime=slot_time).first()
+            existing_meeting = mongo.db.meetings.find_one({"meeting_datetime": slot_time})
 
             slots.append({
                 'datetime': slot_time.isoformat(),
@@ -122,20 +142,18 @@ def book_meeting():
         meeting_datetime = datetime.fromisoformat(datetime_str)
         
         # Check if slot is still available
-        existing_meeting = Meeting.query.filter_by(meeting_datetime=meeting_datetime).first()
+        existing_meeting = mongo.db.meetings.find_one({"meeting_datetime": meeting_datetime})
         if existing_meeting:
             return jsonify({"message": "This time slot is no longer available. Please choose another time."}), 400
         
         # Save meeting request to database (without meeting link)
-        new_meeting = Meeting(
-            name=name,
-            email=email,
-            meeting_datetime=meeting_datetime,
-            meeting_link="",  # Will be provided later by admin
-            status="pending"  # Status indicates waiting for meeting link
-        )
-        db.session.add(new_meeting)
-        db.session.commit()
+        mongo.db.meetings.insert_one({
+            "name": name,
+            "email": email,
+            "meeting_datetime": meeting_datetime,
+            "meeting_link": "",  # Will be provided later by admin
+            "status": "pending"  # Status indicates waiting for meeting link
+        })
         
         # Send meeting request email to company only
         send_meeting_request_email(mail, name, email, meeting_datetime)
@@ -173,28 +191,34 @@ def admin():
     per_page = 10
     search = request.args.get('search', '')
     
-    query = Contact.query
+    query = {}
     if search:
-        query = query.filter(
-            (Contact.name.contains(search)) |
-            (Contact.email.contains(search)) |
-            (Contact.message.contains(search))
-        )
+        query = {
+            "$or": [
+                {"name": {"$regex": search, "$options": "i"}},
+                {"email": {"$regex": search, "$options": "i"}},
+                {"message": {"$regex": search, "$options": "i"}}
+            ]
+        }
     
-    contacts = query.paginate(page=page, per_page=per_page, error_out=False)
-    total_contacts = Contact.query.count()
+    contacts_cursor = mongo.db.contacts.find(query).skip((page-1)*per_page).limit(per_page)
+    contacts = list(contacts_cursor)
+    total_contacts = mongo.db.contacts.count_documents(query)
+    contacts_pagination = Pagination(page, per_page, total_contacts)
     
     # Get meetings data
     meetings_page = request.args.get('meetings_page', 1, type=int)
-    meetings = Meeting.query.order_by(Meeting.meeting_datetime.desc()).paginate(page=meetings_page, per_page=per_page, error_out=False)
-    total_meetings = Meeting.query.count()
+    meetings_cursor = mongo.db.meetings.find().sort("meeting_datetime", -1).skip((meetings_page-1)*per_page).limit(per_page)
+    meetings = list(meetings_cursor)
+    total_meetings = mongo.db.meetings.count_documents({})
+    meetings_pagination = Pagination(meetings_page, per_page, total_meetings)
     
     return render_template('admin.html', 
                          contacts=contacts, 
                          meetings=meetings,
                          search=search,
-                         total_contacts=total_contacts,
-                         total_meetings=total_meetings)
+                         contacts_pagination=contacts_pagination,
+                         meetings_pagination=meetings_pagination)
 
 @app.route('/admin/meeting/<int:meeting_id>/provide-link', methods=['POST'])
 @login_required
@@ -206,12 +230,15 @@ def provide_meeting_link(meeting_id):
         return jsonify({"message": "Meeting link is required."}), 400
     
     try:
-        meeting = Meeting.query.get_or_404(meeting_id)
+        meeting = mongo.db.meetings.find_one({"_id": meeting_id})
+        if not meeting:
+            return jsonify({"message": "Meeting not found."}), 404
         
         # Update meeting with link and change status
-        meeting.meeting_link = meeting_link
-        meeting.status = 'scheduled'
-        db.session.commit()
+        mongo.db.meetings.update_one(
+            {"_id": meeting_id},
+            {"$set": {"meeting_link": meeting_link, "status": "scheduled"}}
+        )
         
         # Send confirmation email to client
         send_meeting_email(mail, meeting.name, meeting.email, meeting.meeting_datetime, meeting_link)
@@ -279,21 +306,25 @@ def reschedule_meeting(meeting_id):
         return jsonify({"message": "New date and time are required."}), 400
     
     try:
-        meeting = Meeting.query.get_or_404(meeting_id)
+        meeting = mongo.db.meetings.find_one({"_id": meeting_id})
+        if not meeting:
+            return jsonify({"message": "Meeting not found."}), 404
         new_datetime = datetime.fromisoformat(new_datetime_str)
         
         # Check if the new slot is available
-        existing_meeting = Meeting.query.filter(
-            Meeting.meeting_datetime == new_datetime,
-            Meeting.id != meeting_id
-        ).first()
+        existing_meeting = mongo.db.meetings.find_one({
+            "meeting_datetime": new_datetime,
+            "_id": {"$ne": meeting_id}
+        })
         
         if existing_meeting:
             return jsonify({"message": "This time slot is already booked. Please choose another time."}), 400
         
-        old_datetime = meeting.meeting_datetime
-        meeting.meeting_datetime = new_datetime
-        db.session.commit()
+        old_datetime = meeting['meeting_datetime']
+        mongo.db.meetings.update_one(
+            {"_id": meeting_id},
+            {"$set": {"meeting_datetime": new_datetime}}
+        )
         
         return jsonify({"message": f"Meeting rescheduled successfully from {old_datetime.strftime('%Y-%m-%d %H:%M')} to {new_datetime.strftime('%Y-%m-%d %H:%M')}."})
     
@@ -305,9 +336,13 @@ def reschedule_meeting(meeting_id):
 @login_required
 def complete_meeting(meeting_id):
     try:
-        meeting = Meeting.query.get_or_404(meeting_id)
-        meeting.status = 'completed'
-        db.session.commit()
+        meeting = mongo.db.meetings.find_one({"_id": meeting_id})
+        if not meeting:
+            return jsonify({"message": "Meeting not found."}), 404
+        mongo.db.meetings.update_one(
+            {"_id": meeting_id},
+            {"$set": {"status": "completed"}}
+        )
         
         return jsonify({"message": "Meeting marked as completed successfully!"})
     
@@ -319,9 +354,10 @@ def complete_meeting(meeting_id):
 @login_required
 def delete_meeting(meeting_id):
     try:
-        meeting = Meeting.query.get_or_404(meeting_id)
-        db.session.delete(meeting)
-        db.session.commit()
+        meeting = mongo.db.meetings.find_one({"_id": meeting_id})
+        if not meeting:
+            return jsonify({"message": "Meeting not found."}), 404
+        mongo.db.meetings.delete_one({"_id": meeting_id})
         
         return jsonify({"message": "Meeting deleted successfully!"})
     
@@ -330,6 +366,4 @@ def delete_meeting(meeting_id):
         return jsonify({"message": "Failed to delete meeting. Please try again."}), 500
 
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
     app.run(debug=True, host='0.0.0.0', port=5000)
