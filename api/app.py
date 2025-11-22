@@ -75,23 +75,26 @@ def contact():
     message = data.get('message')
 
     # Send email first
+    email_sent = False
     try:
         send_contact_email(mail, name, email, message)
-        
-        # Only save to database if email was sent successfully
-        mongo.db.contacts.insert_one({
-            "name": name,
-            "email": email,
-            "message": message,
-            "timestamp": datetime.utcnow()
-        })
-        
-        return jsonify({"message": "Thank you for contacting us! We will get back to you soon."})
-    
+        email_sent = True
     except Exception as e:
-        # If email fails, don't save to database
         print(f"Email sending failed: {e}")
-        return jsonify({"message": "Sorry, there was an error sending your message. Please try again later."}), 500
+    
+    # Save to database regardless
+    mongo.db.contacts.insert_one({
+        "name": name,
+        "email": email,
+        "message": message,
+        "timestamp": datetime.utcnow(),
+        "email_sent": email_sent
+    })
+    
+    if email_sent:
+        return jsonify({"message": "Thank you for contacting us! We will get back to you soon."})
+    else:
+        return jsonify({"message": "Your message has been saved. We will contact you soon."})
 
 @app.route('/get-started')
 def get_started():
