@@ -1021,7 +1021,7 @@
                                 <td class="message-cell" title="{{ contact.message }}">{{ contact.message }}</td>
                                 <td>{{ contact.timestamp.strftime('%Y-%m-%d %H:%M') }}</td>
                                 <td class="actions">
-                                    <form method="POST" action="{{ url_for('delete_contact', id=contact.id) }}"
+                                    <form method="POST" action="{{ url_for('delete_contact', contact_id=contact.id) }}"
                                         style="display: inline;" onsubmit="return confirmDelete()">
                                         <button type="submit" class="btn btn-danger btn-sm">
                                             <i class="fas fa-trash"></i> Delete

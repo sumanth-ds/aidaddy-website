@@ -215,7 +215,10 @@ def admin():
         }
     
     contacts_cursor = mongo.db.contacts.find(query).skip((page-1)*per_page).limit(per_page)
-    contacts = list(contacts_cursor)
+    contacts = []
+    for contact in contacts_cursor:
+        contact['id'] = str(contact['_id'])
+        contacts.append(contact)
     total_contacts = mongo.db.contacts.count_documents(query)
     contacts_pagination = Pagination(page, per_page, total_contacts)
     
@@ -380,6 +383,21 @@ def delete_meeting(meeting_id):
     except Exception as e:
         print(f"Failed to delete meeting: {e}")
         return jsonify({"message": "Failed to delete meeting. Please try again."}), 500
+
+@app.route('/admin/contact/<contact_id>/delete', methods=['POST'])
+@login_required
+def delete_contact(contact_id):
+    try:
+        contact = mongo.db.contacts.find_one({"_id": ObjectId(contact_id)})
+        if not contact:
+            return jsonify({"message": "Contact not found."}), 404
+        mongo.db.contacts.delete_one({"_id": ObjectId(contact_id)})
+        
+        return jsonify({"message": "Contact deleted successfully!"})
+    
+    except Exception as e:
+        print(f"Failed to delete contact: {e}")
+        return jsonify({"message": "Failed to delete contact. Please try again."}), 500
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
