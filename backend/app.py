@@ -40,6 +40,7 @@ load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '..', '.env'))
 
 template_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'frontend', 'templates'))
 app = Flask(__name__, template_folder=template_dir)
+app.secret_key = os.getenv('SECRET_KEY')
 
 # Database configuration
 app.config['MONGO_URI'] = os.getenv('MONGODB_URI')
@@ -174,7 +175,9 @@ def login():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-        if username == 'admin' and password == 'admin123':  # Change this to secure credentials
+        admin_username = os.getenv('ADMIN_USERNAME', 'admin')
+        admin_password = os.getenv('ADMIN_PASSWORD', 'admin123')
+        if username == admin_username and password == admin_password:
             user = User(1)
             login_user(user)
             return redirect(url_for('admin'))
