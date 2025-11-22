@@ -1,4 +1,3 @@
-import pysqlite3
 from flask import Flask, render_template, request, jsonify, redirect, url_for, session, flash
 from flask_mail import Mail, Message
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
@@ -15,8 +14,9 @@ template_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'fr
 app = Flask(__name__, template_folder=template_dir)
 
 # Database configuration
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///contacts.db'
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 
 # Email configuration
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
@@ -335,3 +335,4 @@ if __name__ == '__main__':
         db.create_all()
 
     app.run(debug=True, host='0.0.0.0', port=5000)
+
