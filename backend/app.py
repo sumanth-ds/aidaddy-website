@@ -88,7 +88,7 @@ def contact():
         "name": name,
         "email": email,
         "message": message,
-        "timestamp": datetime.utcnow(),
+        "timestamp": datetime.now(),
         "email_sent": email_sent
     })
     
@@ -108,6 +108,12 @@ def get_available_slots():
     slots = []
     today = datetime.now().date()
 
+    # Fetch all booked meeting datetimes at once
+    booked_slots = set()
+    for meeting in mongo.db.meetings.find({}, {"meeting_datetime": 1}):
+        if meeting.get('meeting_datetime'):
+            booked_slots.add(meeting['meeting_datetime'])
+
     for day_offset in range(90):
         current_date = today + timedelta(days=day_offset)
 
@@ -120,13 +126,13 @@ def get_available_slots():
             slot_time = datetime.combine(current_date, datetime.min.time().replace(hour=hour))
 
             # Check if slot is already booked
-            existing_meeting = mongo.db.meetings.find_one({"meeting_datetime": slot_time})
+            available = slot_time not in booked_slots
 
             slots.append({
                 'datetime': slot_time.isoformat(),
                 'display': slot_time.strftime('%A, %B %d at %I:%M %p'),
-                'available': existing_meeting is None,
-                'booked': existing_meeting is not None,
+                'available': available,
+                'booked': not available,
                 'date': current_date.isoformat(),
                 'time': slot_time.strftime('%I:%M %p'),
                 'day': current_date.strftime('%A'),
@@ -160,7 +166,12 @@ def book_meeting():
         })
         
         # Send meeting request email to company only
-        send_meeting_request_email(mail, name, email, meeting_datetime)
+        email_sent = False
+        try:
+            send_meeting_request_email(mail, name, email, meeting_datetime)
+            email_sent = True
+        except Exception as e:
+            print(f"Email sending failed: {e}")
         
         return jsonify({
             "message": "Meeting request submitted successfully! We will contact you soon with the meeting link.",
