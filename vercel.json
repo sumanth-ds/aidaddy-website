@@ -2,6 +2,10 @@
   "version": 2,
   "builds": [
     {
+      "src": "api/app.py",
+      "use": "@vercel/python"
+    },
+    {
       "src": "frontend/templates/**/*",
       "use": "@vercel/static"
     }
@@ -9,18 +13,11 @@
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "https://aidaddy-backend.onrender.com/api/$1"
-    },
-    {
-      "src": "/contact",
-      "dest": "https://aidaddy-backend.onrender.com/contact"
+      "dest": "/api/app.py"
     },
     {
       "src": "/(.*)",
-      "dest": "/frontend/templates/$1"
+      "dest": "/api/app.py"
     }
-  ],
-  "env": {
-    "BACKEND_URL": "https://aidaddy-backend.onrender.com"
-  }
+  ]
 }
