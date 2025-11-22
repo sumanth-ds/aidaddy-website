@@ -14,7 +14,7 @@ template_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'fr
 app = Flask(__name__, template_folder=template_dir)
 
 # Database configuration
-app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///contacts.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 
@@ -335,4 +335,5 @@ if __name__ == '__main__':
         db.create_all()
 
     app.run(debug=True, host='0.0.0.0', port=5000)
+
 
