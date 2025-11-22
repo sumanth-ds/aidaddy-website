@@ -1,10 +1,10 @@
+import pysqlite3
 from flask import Flask, render_template, request, jsonify, redirect, url_for, session, flash
 from flask_mail import Mail, Message
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from models import db, Contact, Meeting
 from mail import send_contact_email, send_meeting_email, send_meeting_request_email
 from dotenv import load_dotenv
-import pysqlite3
 import os
 from datetime import datetime, timedelta
 import uuid
@@ -333,4 +333,5 @@ def delete_meeting(meeting_id):
 if __name__ == '__main__':
     with app.app_context():
         db.create_all()
+
     app.run(debug=True, host='0.0.0.0', port=5000)
