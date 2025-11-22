@@ -4,6 +4,7 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 from models import db, Contact, Meeting
 from mail import send_contact_email, send_meeting_email, send_meeting_request_email
 from dotenv import load_dotenv
+import pysqlite3
 import os
 from datetime import datetime, timedelta
 import uuid
