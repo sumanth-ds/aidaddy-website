@@ -1,13 +1,15 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for, session, flash
+from flask import Flask, render_template, request, jsonify, redirect, url_for, session, flash, Response
 from flask_mail import Mail, Message
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_pymongo import PyMongo
-from mail import send_contact_email, send_meeting_email, send_meeting_request_email
+from mail import send_contact_email, send_meeting_email, send_meeting_request_email, send_meeting_request_confirmation_email
 from dotenv import load_dotenv
 import os
 from datetime import datetime, timedelta
 import uuid
 from bson import ObjectId
+import csv
+from io import StringIO
 
 class Pagination:
     def __init__(self, page, per_page, total):
@@ -39,13 +41,22 @@ class Pagination:
 
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '..', '.env'))
 
-template_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'frontend', 'templates'))
+template_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'react-frontend'))
 app = Flask(__name__, template_folder=template_dir)
 app.secret_key = os.getenv('SECRET_KEY')
 
 # Database configuration
 app.config['MONGO_URI'] = os.getenv('MONGODB_URI')
 mongo = PyMongo(app)
+
+# Email configuration
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
+app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_USERNAME')
 mail = Mail(app)
 
 # Login manager
@@ -67,7 +78,8 @@ def home():
 
 @app.route('/demo')
 def demo():
-    return render_template('demo.html')
+    # Serve SPA for demo route
+    return render_template('index.html')
 
 @app.route('/contact', methods=['POST'])
 def contact():
@@ -75,6 +87,17 @@ def contact():
     name = data.get('name')
     email = data.get('email')
     message = data.get('message')
+
+    # Check for duplicate submissions (same email and message within last 5 minutes)
+    five_minutes_ago = datetime.now() - timedelta(minutes=5)
+    existing_contact = mongo.db.contacts.find_one({
+        "email": email,
+        "message": message,
+        "timestamp": {"$gte": five_minutes_ago}
+    })
+    
+    if existing_contact:
+        return jsonify({"message": "This message has already been submitted recently. Please wait a few minutes before submitting again."}), 429
 
     # Send email first
     email_sent = False
@@ -94,13 +117,28 @@ def contact():
     })
     
     if email_sent:
-        return jsonify({"message": "Thank you for contacting us! We will get back to you soon."})
+        return jsonify({"message": "Thank you for contacting us! We will get back to you soon.", "email_sent": True})
     else:
-        return jsonify({"message": "Your message has been saved. We will contact you soon."})
+        return jsonify({"message": "Your message has been saved. We will contact you soon.", "email_sent": False})
 
-@app.route('/get-started')
-def get_started():
-    return render_template('booking.html')
+@app.route('/debug/db')
+def debug_db():
+    contacts = []
+    for contact in mongo.db.contacts.find().limit(5):
+        contact['_id'] = str(contact['_id'])
+        contacts.append(contact)
+    
+    meetings = []
+    for meeting in mongo.db.meetings.find().limit(5):
+        meeting['_id'] = str(meeting['_id'])
+        meetings.append(meeting)
+    
+    return jsonify({
+        'contacts_count': mongo.db.contacts.count_documents({}),
+        'meetings_count': mongo.db.meetings.count_documents({}),
+        'contacts': contacts,
+        'meetings': meetings
+    })
 
 @app.route('/api/available-slots')
 def get_available_slots():
@@ -152,25 +190,44 @@ def book_meeting():
     try:
         meeting_datetime = datetime.fromisoformat(datetime_str)
         
+        # Check for duplicate meeting requests (same email within last 10 minutes)
+        ten_minutes_ago = datetime.now() - timedelta(minutes=10)
+        existing_request = mongo.db.meetings.find_one({
+            "email": email,
+            "timestamp": {"$gte": ten_minutes_ago}
+        })
+        
+        if existing_request:
+            return jsonify({"message": "You have already submitted a meeting request recently. Please wait before submitting another request."}), 429
+        
         # Check if slot is still available
         existing_meeting = mongo.db.meetings.find_one({"meeting_datetime": meeting_datetime})
         if existing_meeting:
             return jsonify({"message": "This time slot is no longer available. Please choose another time."}), 400
         
         # Save meeting request to database (without meeting link)
-        mongo.db.meetings.insert_one({
+        result = mongo.db.meetings.insert_one({
             "name": name,
             "email": email,
             "meeting_datetime": meeting_datetime,
             "meeting_link": "",  # Will be provided later by admin
-            "status": "pending"  # Status indicates waiting for meeting link
+            "status": "pending",  # Status indicates waiting for meeting link
+            "timestamp": datetime.now()  # Add timestamp for duplicate prevention
         })
+        print(f"Meeting inserted with ID: {result.inserted_id}")
         
-        # Send meeting request email to company only
-        send_meeting_request_email(mail, name, email, meeting_datetime)
+        # Send meeting request email to company and confirmation to user
+        email_sent = False
+        try:
+            send_meeting_request_email(mail, name, email, meeting_datetime)
+            send_meeting_request_confirmation_email(mail, name, email, meeting_datetime)
+            email_sent = True
+        except Exception as e:
+            print(f"Email sending failed: {e}")
         
         return jsonify({
             "message": "Meeting request submitted successfully! We will contact you soon with the meeting link.",
+            "email_sent": email_sent
         })
     
     except Exception as e:
@@ -180,26 +237,55 @@ def book_meeting():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        username = request.form.get('username')
-        password = request.form.get('password')
+        data = request.get_json(silent=True) or request.form
+        username = data.get('username')
+        password = data.get('password')
         admin_username = os.getenv('ADMIN_USERNAME', 'admin')
         admin_password = os.getenv('ADMIN_PASSWORD', 'admin123')
         if username == admin_username and password == admin_password:
             user = User(1)
             login_user(user)
+            if request.is_json or request.headers.get('Accept', '').lower().startswith('application/json'):
+                return jsonify({'message': 'Login successful', 'success': True})
             return redirect(url_for('admin'))
+        if request.is_json or request.headers.get('Accept', '').lower().startswith('application/json'):
+            return jsonify({'message': 'Invalid credentials', 'success': False}), 401
         flash('Invalid credentials')
-    return render_template('login.html')
+    # Serve SPA index for login page
+    return render_template('index.html')
 
 @app.route('/logout')
 @login_required
 def logout():
     logout_user()
+    if request.is_json or request.headers.get('Accept', '').lower().startswith('application/json'):
+        return jsonify({'message': 'Logged out', 'success': True})
     return redirect(url_for('home'))
+
+
+@app.route('/api/login', methods=['POST'])
+def api_login():
+    data = request.get_json() or request.form
+    username = data.get('username')
+    password = data.get('password')
+    admin_username = os.getenv('ADMIN_USERNAME', 'admin')
+    admin_password = os.getenv('ADMIN_PASSWORD', 'admin123')
+    if username == admin_username and password == admin_password:
+        user = User(1)
+        login_user(user)
+        return jsonify({'message': 'Login successful', 'success': True})
+    return jsonify({'message': 'Invalid credentials', 'success': False}), 401
+
+
+@app.route('/api/logout', methods=['POST', 'GET'])
+def api_logout():
+    logout_user()
+    return jsonify({'message': 'Logged out', 'success': True})
 
 @app.route('/admin')
 @login_required
 def admin():
+    print("Admin route called")
     page = request.args.get('page', 1, type=int)
     per_page = 10
     search = request.args.get('search', '')
@@ -219,7 +305,9 @@ def admin():
     for contact in contacts_cursor:
         contact['id'] = str(contact['_id'])
         contacts.append(contact)
+    print(f"Fetched {len(contacts)} contacts for admin")
     total_contacts = mongo.db.contacts.count_documents(query)
+    print(f"Total contacts in DB: {total_contacts}")
     contacts_pagination = Pagination(page, per_page, total_contacts)
     
     # Get meetings data
@@ -229,7 +317,9 @@ def admin():
     for meeting in meetings_cursor:
         meeting['id'] = str(meeting['_id'])
         meetings.append(meeting)
+    print(f"Fetched {len(meetings)} meetings for admin")
     total_meetings = mongo.db.meetings.count_documents({})
+    print(f"Total meetings in DB: {total_meetings}")
     meetings_pagination = Pagination(meetings_page, per_page, total_meetings)
     
     return render_template('admin.html', 
@@ -238,6 +328,66 @@ def admin():
                          search=search,
                          contacts_pagination=contacts_pagination,
                          meetings_pagination=meetings_pagination)
+
+@app.route('/admin/download/contacts')
+@login_required
+def download_contacts():
+    # Get all contacts
+    contacts = list(mongo.db.contacts.find())
+    
+    # Create CSV
+    output = StringIO()
+    writer = csv.writer(output)
+    
+    # Write header
+    writer.writerow(['Name', 'Email', 'Message', 'Timestamp', 'Email Sent'])
+    
+    # Write data
+    for contact in contacts:
+        writer.writerow([
+            contact.get('name', ''),
+            contact.get('email', ''),
+            contact.get('message', ''),
+            contact.get('timestamp', '').strftime('%Y-%m-%d %H:%M:%S') if contact.get('timestamp') else '',
+            'Yes' if contact.get('email_sent', False) else 'No'
+        ])
+    
+    output.seek(0)
+    return Response(
+        output.getvalue(),
+        mimetype='text/csv',
+        headers={'Content-Disposition': 'attachment; filename=contacts.csv'}
+    )
+
+@app.route('/admin/download/meetings')
+@login_required
+def download_meetings():
+    # Get all meetings
+    meetings = list(mongo.db.meetings.find())
+    
+    # Create CSV
+    output = StringIO()
+    writer = csv.writer(output)
+    
+    # Write header
+    writer.writerow(['Name', 'Email', 'Meeting DateTime', 'Status', 'Meeting Link'])
+    
+    # Write data
+    for meeting in meetings:
+        writer.writerow([
+            meeting.get('name', ''),
+            meeting.get('email', ''),
+            meeting.get('meeting_datetime', '').strftime('%Y-%m-%d %H:%M:%S') if meeting.get('meeting_datetime') else '',
+            meeting.get('status', 'pending'),
+            meeting.get('meeting_link', '')
+        ])
+    
+    output.seek(0)
+    return Response(
+        output.getvalue(),
+        mimetype='text/csv',
+        headers={'Content-Disposition': 'attachment; filename=meetings.csv'}
+    )
 
 @app.route('/admin/meeting/<meeting_id>/provide-link', methods=['POST'])
 @login_required

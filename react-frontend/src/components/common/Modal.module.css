@@ -1,0 +1,114 @@
+.modal {
+    display: flex;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+    animation: fadeIn 0.3s ease-out;
+    align-items: center;
+    justify-content: center;
+}
+
+.modalContent {
+    background-color: var(--white);
+    border: none;
+    width: 90%;
+    max-width: 450px;
+    border-radius: 15px;
+    box-shadow: var(--shadow-xl);
+    animation: slideIn 0.3s ease-out;
+    overflow: hidden;
+}
+
+.modalHeader {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+    color: white;
+    padding: 25px 30px;
+    text-align: center;
+}
+
+.modalHeader h3 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.modalBody {
+    padding: 30px;
+    text-align: center;
+    line-height: 1.6;
+}
+
+.icon {
+    font-size: 48px;
+    margin-bottom: 20px;
+    display: block;
+}
+
+.iconSuccess {
+    color: var(--success);
+}
+
+.iconError {
+    color: var(--danger);
+}
+
+.iconWarning {
+    color: var(--warning);
+}
+
+.iconInfo {
+    color: var(--info);
+}
+
+.modalFooter {
+    padding: 20px 30px;
+    text-align: center;
+    border-top: 1px solid var(--gray-100);
+    background: var(--gray-50);
+}
+
+.btnModal {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: var(--transition);
+    font-size: 1rem;
+}
+
+.btnModal:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3);
+}
+
+.btnSuccess {
+    background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+}
+
+.btnSuccess:hover {
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+.btnError {
+    background: linear-gradient(135deg, var(--danger) 0%, #dc2626 100%);
+}
+
+.btnError:hover {
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+}
+
+.btnWarning {
+    background: linear-gradient(135deg, var(--warning) 0%, #d97706 100%);
+}
+
+.btnWarning:hover {
+    box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+}

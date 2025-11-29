@@ -8,7 +8,17 @@ if (!fs.existsSync(filePath)) {
   process.exit(1);
 }
 
-const backend = process.env.BACKEND_URL || 'https://aidaddy-backend.onrender.com';
+// Prefer explicit BACKEND_URL env var, then VITE_API_BASE_URL from frontend .env; otherwise fail
+const dotenv = require('dotenv');
+const localEnvPath = path.join(__dirname, '..', 'react-frontend', '.env');
+if (fs.existsSync(localEnvPath)) {
+  dotenv.config({ path: localEnvPath });
+}
+const backend = process.env.BACKEND_URL || process.env.VITE_API_BASE_URL;
+if (!backend) {
+  console.error('No BACKEND_URL or VITE_API_BASE_URL found in environment or react-frontend/.env. Please set BACKEND_URL or VITE_API_BASE_URL before running this script.');
+  process.exit(1);
+}
 let content = fs.readFileSync(filePath, 'utf8');
 
 if (content.indexOf('__BACKEND_URL__') === -1) {
