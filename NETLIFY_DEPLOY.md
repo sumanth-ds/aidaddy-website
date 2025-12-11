@@ -18,7 +18,10 @@ MAIL_DEFAULT_SENDER=your_email@gmail.com
 ADMIN_USERNAME=admin
 ADMIN_PASSWORD=your_secure_admin_password
 NETLIFY=true
+VITE_API_BASE_URL=
 ```
+
+**Important**: `VITE_API_BASE_URL` must be empty (or not set) so the frontend uses the same domain for API calls.
 
 ### How It Works:
 1. **Frontend**: React app is built and served from `react-frontend/dist`

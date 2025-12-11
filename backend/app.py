@@ -184,6 +184,48 @@ class User(UserMixin):
 def load_user(user_id):
     return User(user_id)
 
+# Health check endpoint
+@app.route('/api/health', methods=['GET'])
+def health_check():
+    """Health check endpoint to verify API and database connectivity"""
+    try:
+        # Test database connection
+        mongo.db.command('ping')
+        db_status = 'connected'
+    except Exception as e:
+        db_status = f'error: {str(e)}'
+    
+    return jsonify({
+        'status': 'ok',
+        'database': db_status,
+        'environment': 'production' if os.getenv('NETLIFY') else 'development'
+    })
+
+# Test database endpoint
+@app.route('/api/test-db', methods=['GET'])
+def test_database():
+    """Test database operations"""
+    try:
+        # Count documents
+        contacts_count = mongo.db.contacts.count_documents({})
+        meetings_count = mongo.db.meetings.count_documents({})
+        admins_count = mongo.db.admins.count_documents({})
+        
+        return jsonify({
+            'success': True,
+            'database': 'connected',
+            'collections': {
+                'contacts': contacts_count,
+                'meetings': meetings_count,
+                'admins': admins_count
+            }
+        })
+    except Exception as e:
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
 # @app.route('/')
 # def home():
 #     return render_template('index.html')
