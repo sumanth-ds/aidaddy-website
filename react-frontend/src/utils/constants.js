@@ -1,4 +1,5 @@
-// In dev we use Vite proxy, so default to empty string to use same origin (will be proxied to backend)
+// In production (Netlify), use same origin for API calls (they'll be redirected via netlify.toml)
+// In dev we use Vite proxy, so default to empty string to use same origin
 export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
 
 export const ROUTES = {

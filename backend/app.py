@@ -89,10 +89,27 @@ app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_DEFAULT_SENDER') or app.conf
 app.config['MONGO_URI'] = os.getenv('MONGODB_URI')
 mongo = PyMongo(app)
 
-# CORS configuration for React frontend - allow dev servers
+# CORS configuration for React frontend - allow dev servers and Netlify
 from urllib.parse import urlparse
 
+# Get production URL from environment if available
+production_url = os.getenv('PRODUCTION_URL', '')
+netlify_url = os.getenv('URL', '')  # Netlify sets this automatically
+
 allowed_frontend_origins = [u.strip() for u in os.getenv('FRONTEND_ORIGINS', 'http://localhost:5173,http://localhost:3000,http://127.0.0.1:5174,http://127.0.0.1:3000,http://localhost:5174/').split(',') if u.strip()]
+
+# Add production and Netlify URLs to allowed origins
+for url in [production_url, netlify_url, vite_api_base]:
+    if url:
+        try:
+            parsed = urlparse(url)
+            if parsed.scheme and parsed.netloc:
+                origin = f"{parsed.scheme}://{parsed.netloc}"
+                if origin not in allowed_frontend_origins:
+                    allowed_frontend_origins.append(origin)
+        except Exception:
+            pass
+
 # If front-end Vite base URL is provided, also add it to allowed origins
 vite_api_base = os.getenv('VITE_API_BASE_URL')
 if vite_api_base:
@@ -105,14 +122,16 @@ if vite_api_base:
     except Exception:
         pass
 
+# In production (Netlify), allow all origins for serverless function
+if os.getenv('NETLIFY', '') == 'true':
+    allowed_frontend_origins = ['*']
+
 CORS(app, resources={
     r"/*": {
-        "origins": [
-            *allowed_frontend_origins,
-        ],
+        "origins": allowed_frontend_origins,
         "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         "allow_headers": ["Content-Type", "Authorization"],
-        "supports_credentials": True
+        "supports_credentials": True if allowed_frontend_origins != ['*'] else False
     }
 })
 mail = Mail(app)

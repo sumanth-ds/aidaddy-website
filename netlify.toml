@@ -7,11 +7,32 @@
   NODE_VERSION = "18"
   PYTHON_VERSION = "3.11"
 
+# Redirect all API calls to Netlify functions
 [[redirects]]
   from = "/api/*"
-  to = "/.netlify/functions/:splat"
+  to = "/.netlify/functions/api/:splat"
   status = 200
+  force = true
 
+[[redirects]]
+  from = "/contact"
+  to = "/.netlify/functions/api/contact"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/book-meeting"
+  to = "/.netlify/functions/api/book-meeting"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/admin/*"
+  to = "/.netlify/functions/api/admin/:splat"
+  status = 200
+  force = true
+
+# SPA fallback - must be last
 [[redirects]]
   from = "/*"
   to = "/index.html"
