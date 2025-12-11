@@ -1,0 +1,241 @@
+.privacyContainer {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    padding: 2rem 0;
+}
+
+.privacyContent {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 3rem;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.privacyContent h1 {
+    font-size: 2.5rem;
+    color: #1a202c;
+    margin-bottom: 0.5rem;
+    text-align: center;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.lastUpdated {
+    text-align: center;
+    color: #718096;
+    font-size: 0.95rem;
+    margin-bottom: 2rem;
+    font-style: italic;
+}
+
+.intro {
+    background: #eff6ff;
+    border-left: 4px solid #3b82f6;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+    border-radius: 8px;
+}
+
+.intro p {
+    margin: 0;
+    color: #1a202c;
+    line-height: 1.7;
+}
+
+.section {
+    margin-bottom: 2.5rem;
+}
+
+.section h2 {
+    font-size: 1.75rem;
+    color: #1a202c;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #3b82f6;
+}
+
+.section h3 {
+    font-size: 1.3rem;
+    color: #2d3748;
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.section h4 {
+    font-size: 1.1rem;
+    color: #2d3748;
+    margin-bottom: 0.5rem;
+}
+
+.section p {
+    color: #4a5568;
+    line-height: 1.8;
+    margin-bottom: 1rem;
+}
+
+.section ul {
+    margin-left: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.section li {
+    color: #4a5568;
+    line-height: 1.8;
+    margin-bottom: 0.5rem;
+}
+
+.highlight {
+    background: #d1fae5;
+    border-left: 4px solid #10b981;
+    padding: 1rem 1.5rem;
+    margin: 1rem 0;
+    border-radius: 6px;
+    font-weight: 500;
+    color: #065f46;
+}
+
+.disclaimer {
+    background: #fef3c7;
+    border-left: 4px solid #f59e0b;
+    padding: 1rem 1.5rem;
+    margin: 1rem 0;
+    border-radius: 6px;
+    font-style: italic;
+    color: #78350f;
+}
+
+.rightsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin: 1.5rem 0;
+}
+
+.rightCard {
+    background: #f8fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 1.5rem;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.rightCard:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    border-color: #3b82f6;
+}
+
+.rightCard h4 {
+    font-size: 1.1rem;
+    margin-bottom: 0.5rem;
+    color: #1a202c;
+}
+
+.rightCard p {
+    margin: 0;
+    font-size: 0.95rem;
+    color: #4a5568;
+    line-height: 1.6;
+}
+
+.contactInfo {
+    background: #eff6ff;
+    border-left: 4px solid #3b82f6;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-top: 1rem;
+}
+
+.contactInfo p {
+    margin: 0.5rem 0;
+    color: #1e40af;
+}
+
+.note {
+    font-style: italic;
+    color: #64748b;
+    font-size: 0.95rem;
+    margin-top: 1rem;
+}
+
+.acknowledgment {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: white;
+    padding: 2rem;
+    border-radius: 12px;
+    text-align: center;
+    margin-top: 3rem;
+}
+
+.acknowledgment p {
+    margin: 0;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .privacyContainer {
+        padding: 1rem 0;
+    }
+
+    .privacyContent {
+        padding: 2rem 1.5rem;
+        border-radius: 0;
+    }
+
+    .privacyContent h1 {
+        font-size: 2rem;
+    }
+
+    .section h2 {
+        font-size: 1.5rem;
+    }
+
+    .section h3 {
+        font-size: 1.2rem;
+    }
+
+    .section ul {
+        margin-left: 1rem;
+    }
+
+    .rightsGrid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .privacyContent {
+        padding: 1.5rem 1rem;
+    }
+
+    .privacyContent h1 {
+        font-size: 1.75rem;
+    }
+
+    .section h2 {
+        font-size: 1.3rem;
+    }
+
+    .section h3 {
+        font-size: 1.1rem;
+    }
+
+    .lastUpdated {
+        font-size: 0.875rem;
+    }
+
+    .acknowledgment {
+        padding: 1.5rem;
+    }
+
+    .acknowledgment p {
+        font-size: 1rem;
+    }
+}

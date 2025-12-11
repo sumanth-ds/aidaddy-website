@@ -13,6 +13,7 @@ const Hero = () => {
             <div className={styles.heroButtons}>
               <Link to="/get-started" className={styles.ctaButton}>Get Started</Link>
               <a href="#services" className={styles.secondaryButton}>Learn More</a>
+              <a href="https://agenti-frontend.vercel.app/" className={styles.secondaryButton}>Our Free Agent</a>
             </div>
           </div>
         </div>

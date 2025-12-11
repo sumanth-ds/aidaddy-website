@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, jsonify, redirect, url_for, session, flash, Response
+from jinja2.exceptions import TemplateNotFound
 from flask_mail import Mail, Message
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_pymongo import PyMongo
@@ -52,8 +53,28 @@ class Pagination:
 
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '..', '.env'))
 
-template_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'react-frontend'))
-app = Flask(__name__, template_folder=template_dir)
+# Serve React frontend files as templates/static. Prefer the built `dist` folder if available
+frontend_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'react-frontend'))
+frontend_dist = os.path.join(frontend_root, 'dist')
+template_dir = frontend_root
+static_dir = None
+static_url_path = None
+if os.path.exists(os.path.join(frontend_dist, 'index.html')):
+    template_dir = frontend_dist
+    assets_path = os.path.join(frontend_dist, 'assets')
+    if os.path.exists(assets_path):
+        static_dir = assets_path
+        static_url_path = '/assets'
+    else:
+        static_dir = frontend_dist
+        static_url_path = '/'
+elif not os.path.exists(os.path.join(template_dir, 'index.html')):
+    print(f"Warning: Could not find index.html in {template_dir} or {frontend_dist}")
+
+if static_dir:
+    app = Flask(__name__, template_folder=template_dir, static_folder=static_dir, static_url_path=static_url_path)
+else:
+    app = Flask(__name__, template_folder=template_dir)
 app.secret_key = os.getenv('SECRET_KEY')
 
 # Mail configuration
@@ -144,9 +165,9 @@ class User(UserMixin):
 def load_user(user_id):
     return User(user_id)
 
-@app.route('/')
-def home():
-    return render_template('index.html')
+# @app.route('/')
+# def home():
+#     return render_template('index.html')
 
 @app.route('/demo')
 def demo():
@@ -384,6 +405,18 @@ def login():
         flash('Invalid credentials')
     # For SPA, serve the React `index.html` and let the frontend handle the login UI
     return render_template('index.html')
+
+
+@app.errorhandler(404)
+def handle_404(e):
+    # API routes should return JSON 404
+    if request.path.startswith('/api'):
+        return jsonify({'message': 'Not Found', 'success': False}), 404
+    # Otherwise fallback to SPA index so frontend can handle routing
+    try:
+        return render_template('index.html')
+    except TemplateNotFound:
+        return jsonify({'message': 'Not Found', 'success': False}), 404
 
 @app.route('/logout')
 @login_required
@@ -862,6 +895,56 @@ def debug_update_meeting_email_flags():
         print('debug_update_meeting_email_flags failed:', e)
         traceback.print_exc()
         return jsonify({ 'message': 'Failed to update', 'error': str(e) }), 500
+
+
+@app.route('/api/terms-and-conditions')
+def api_terms_and_conditions():
+    """Return terms and conditions as JSON for API consumption."""
+    terms_file = os.path.join(os.path.dirname(__file__), '..', 'TERMS_AND_CONDITIONS.md')
+    try:
+        with open(terms_file, 'r', encoding='utf-8') as f:
+            content = f.read()
+        return jsonify({
+            'success': True,
+            'content': content,
+            'last_updated': 'December 1, 2025'
+        })
+    except FileNotFoundError:
+        return jsonify({
+            'success': False,
+            'message': 'Terms and Conditions file not found'
+        }), 404
+    except Exception as e:
+        print(f"Error reading terms and conditions: {e}")
+        return jsonify({
+            'success': False,
+            'message': 'Error retrieving terms and conditions'
+        }), 500
+
+
+@app.route('/api/privacy-policy')
+def api_privacy_policy():
+    """Return privacy policy as JSON for API consumption."""
+    privacy_file = os.path.join(os.path.dirname(__file__), '..', 'PRIVACY_POLICY.md')
+    try:
+        with open(privacy_file, 'r', encoding='utf-8') as f:
+            content = f.read()
+        return jsonify({
+            'success': True,
+            'content': content,
+            'last_updated': 'December 1, 2025'
+        })
+    except FileNotFoundError:
+        return jsonify({
+            'success': False,
+            'message': 'Privacy Policy file not found'
+        }), 404
+    except Exception as e:
+        print(f"Error reading privacy policy: {e}")
+        return jsonify({
+            'success': False,
+            'message': 'Error retrieving privacy policy'
+        }), 500
 
 if __name__ == '__main__':
     # use_reloader=False is used to prevent [WinError 10038] on Windows

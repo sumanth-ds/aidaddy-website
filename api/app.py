@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, jsonify, redirect, url_for, session, flash, Response
+from jinja2.exceptions import TemplateNotFound
 from flask_mail import Mail, Message
 from flask_login import LoginManager, UserMixin, login_user, login_required, logout_user, current_user
 from flask_pymongo import PyMongo
@@ -41,8 +42,31 @@ class Pagination:
 
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '..', '.env'))
 
-template_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'react-frontend'))
-app = Flask(__name__, template_folder=template_dir)
+# Serve React frontend files as templates/static. Prefer the built `dist` folder if available
+frontend_root = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'react-frontend'))
+frontend_dist = os.path.join(frontend_root, 'dist')
+template_dir = frontend_root
+static_dir = None
+static_url_path = None
+if os.path.exists(os.path.join(frontend_dist, 'index.html')):
+    template_dir = frontend_dist
+    # The production bundle exposes assets under /assets
+    assets_path = os.path.join(frontend_dist, 'assets')
+    if os.path.exists(assets_path):
+        static_dir = assets_path
+        static_url_path = '/assets'
+    else:
+        # Fallback to dist as static dir
+        static_dir = frontend_dist
+        static_url_path = '/'
+elif not os.path.exists(os.path.join(template_dir, 'index.html')):
+    # If neither dist/index.html nor src/index.html are present, log for debugging
+    print(f"Warning: Could not find index.html in {template_dir} or {frontend_dist}")
+
+if static_dir:
+    app = Flask(__name__, template_folder=template_dir, static_folder=static_dir, static_url_path=static_url_path)
+else:
+    app = Flask(__name__, template_folder=template_dir)
 app.secret_key = os.getenv('SECRET_KEY')
 
 # Database configuration
@@ -322,12 +346,28 @@ def admin():
     print(f"Total meetings in DB: {total_meetings}")
     meetings_pagination = Pagination(meetings_page, per_page, total_meetings)
     
-    return render_template('admin.html', 
+    try:
+        return render_template('admin.html', 
                          contacts=contacts, 
                          meetings=meetings,
                          search=search,
                          contacts_pagination=contacts_pagination,
                          meetings_pagination=meetings_pagination)
+    except TemplateNotFound:
+        # Fall back to the SPA index so the frontend can handle admin UI
+        return render_template('index.html')
+
+
+@app.errorhandler(404)
+def handle_404(e):
+    # If API route missing, return JSON 404
+    if request.path.startswith('/api'):
+        return jsonify({'message': 'Not Found', 'success': False}), 404
+    # Otherwise fall back to SPA index (if present)
+    try:
+        return render_template('index.html')
+    except TemplateNotFound:
+        return jsonify({'message': 'Not Found', 'success': False}), 404
 
 @app.route('/admin/download/contacts')
 @login_required
