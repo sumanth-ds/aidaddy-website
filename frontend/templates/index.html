@@ -1,0 +1,1547 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aidaddy.in - AI Services & Solutions</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #7c3aed;
+            --accent: #06d6a0;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --bg-light: #f8fafc;
+            --white: #ffffff;
+            --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            color: var(--text-dark);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Header & Navigation */
+        header {
+            background-color: var(--white);
+            box-shadow: var(--shadow);
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .logo i {
+            margin-right: 10px;
+            color: var(--secondary);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+        }
+
+        .nav-links li {
+            margin-left: 30px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-dark);
+            font-weight: 500;
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .cta-button {
+            background-color: var(--primary);
+            color: var(--white);
+            padding: 10px 25px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+        }
+
+        .cta-button:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-2px);
+        }
+
+        /* Hamburger Menu */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .bar {
+            width: 25px;
+            height: 3px;
+            background-color: var(--text-dark);
+            margin: 3px 0;
+            transition: var(--transition);
+        }
+
+        .hamburger.active .bar:nth-child(1) {
+            transform: rotate(-45deg) translate(-5px, 6px);
+        }
+
+        .hamburger.active .bar:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active .bar:nth-child(3) {
+            transform: rotate(45deg) translate(-5px, -6px);
+        }
+
+        .nav-links.active {
+            display: flex;
+            background-color: rgba(255, 255, 255, 0.95);
+            box-shadow: var(--shadow);
+            border-radius: 10px;
+            padding: 20px;
+            position: absolute;
+            top: 100%;
+            left: 10px;
+            right: 10px;
+            flex-direction: column;
+            backdrop-filter: blur(10px);
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            padding: 150px 0 100px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .hero-text {
+            flex: 1;
+            padding-right: 40px;
+        }
+
+        .hero-image {
+            flex: 1;
+            text-align: center;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-light);
+            margin-bottom: 30px;
+            max-width: 500px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .secondary-button {
+            background-color: transparent;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            padding: 10px 25px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .secondary-button:hover {
+            background-color: rgba(37, 99, 235, 0.1);
+        }
+
+        .hero-image img {
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(0px);
+            }
+
+            50% {
+                transform: translateY(-20px);
+            }
+
+            100% {
+                transform: translateY(0px);
+            }
+        }
+
+        /* Services Section */
+        .services {
+            padding: 100px 0;
+            background-color: var(--white);
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .section-title h2 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .section-title p {
+            color: var(--text-light);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .service-card {
+            background-color: var(--white);
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .service-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .service-icon {
+            background-color: rgba(37, 99, 235, 0.1);
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        .service-icon i {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+
+        .service-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .service-card p {
+            color: var(--text-light);
+        }
+
+        /* Features Section */
+        .features {
+            padding: 100px 0;
+            background-color: var(--bg-light);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 50px;
+            align-items: center;
+        }
+
+        .feature-image img {
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+        }
+
+        .feature-list {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .feature-item {
+            display: flex;
+            gap: 20px;
+        }
+
+        .feature-icon {
+            background-color: rgba(37, 99, 235, 0.1);
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .feature-icon i {
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+
+        .feature-text h3 {
+            margin-bottom: 10px;
+        }
+
+        .feature-text p {
+            color: var(--text-light);
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 100px 0;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: var(--white);
+            text-align: center;
+        }
+
+        .cta-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .cta-section p {
+            max-width: 600px;
+            margin: 0 auto 30px;
+            font-size: 1.1rem;
+        }
+
+        .cta-section .cta-button {
+            background-color: var(--white);
+            color: var(--primary);
+        }
+
+        .cta-section .cta-button:hover {
+            background-color: var(--bg-light);
+        }
+
+        /* Footer */
+        footer {
+            background-color: var(--text-dark);
+            color: var(--white);
+            padding: 80px 0 30px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 40px;
+            margin-bottom: 50px;
+        }
+
+        .footer-column h3 {
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .footer-column h3::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -10px;
+            width: 40px;
+            height: 3px;
+            background-color: var(--accent);
+        }
+
+        .footer-column p {
+            color: #94a3b8;
+            margin-bottom: 20px;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 15px;
+        }
+
+        .footer-links a {
+            color: #94a3b8;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: var(--white);
+            padding-left: 5px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            color: #94a3b8;
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+
+        .social-links a:hover {
+            color: var(--primary);
+        }
+
+        #contact-form label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--white);
+            font-weight: 500;
+        }
+
+        #contact-form input,
+        #contact-form textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #94a3b8;
+            border-radius: 5px;
+            background-color: transparent;
+            color: var(--white);
+        }
+
+        #contact-form textarea {
+            height: 80px;
+            resize: vertical;
+        }
+
+        #contact-form button {
+            width: 100%;
+            padding: 10px;
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        #contact-form button:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            color: var(--white);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .social-links a:hover {
+            background-color: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: #94a3b8;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .hero-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .hero-text {
+                padding-right: 0;
+                margin-bottom: 50px;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .footer-content {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            header {
+                background-color: transparent;
+                box-shadow: none;
+            }
+
+            .navbar {
+                flex-direction: column;
+                padding: 15px 0;
+            }
+
+            .hamburger {
+                display: flex;
+                align-self: flex-end;
+                margin-bottom: 15px;
+            }
+
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                align-items: center;
+                margin: 20px 0;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-buttons {
+                justify-content: center;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .nav-links {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .nav-links li {
+                margin: 10px 0;
+            }
+
+            .hero h1 {
+                font-size: 2rem;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 0;
+            border: 1px solid #888;
+            width: 90%;
+            max-width: 400px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: white;
+            padding: 20px;
+            border-radius: 10px 10px 0 0;
+            text-align: center;
+        }
+
+        .modal-body {
+            padding: 20px;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        .modal-footer {
+            padding: 15px 20px;
+            text-align: center;
+            border-top: 1px solid #eee;
+        }
+
+        .btn-modal {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-modal:hover {
+            background-color: #1d4ed8;
+            transform: translateY(-1px);
+        }
+
+        .btn-success {
+            background-color: #10b981;
+        }
+
+        .btn-success:hover {
+            background-color: #059669;
+        }
+
+        .btn-error {
+            background-color: #ef4444;
+        }
+
+        .btn-error:hover {
+            background-color: #dc2626;
+        }
+
+        .icon-success,
+        .icon-error {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .icon-success {
+            color: #10b981;
+        }
+
+        .icon-error {
+            color: #ef4444;
+        }
+
+        /* Beautiful Booking Modal Styles */
+        .booking-modal-content {
+            max-width: 550px !important;
+            border-radius: 20px !important;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
+            overflow: hidden;
+        }
+
+        .booking-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+            padding: 40px 30px 30px !important;
+            text-align: center !important;
+            position: relative !important;
+        }
+
+        .booking-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="booking-pattern" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23booking-pattern)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .booking-icon {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 32px;
+            color: white;
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .booking-header h3 {
+            color: white !important;
+            font-size: 28px !important;
+            font-weight: 700 !important;
+            margin: 0 0 10px !important;
+            position: relative;
+            z-index: 1;
+        }
+
+        .booking-subtitle {
+            color: rgba(255, 255, 255, 0.9) !important;
+            font-size: 16px !important;
+            margin: 0 !important;
+            position: relative;
+            z-index: 1;
+        }
+
+        .booking-body {
+            padding: 30px !important;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%) !important;
+        }
+
+        .booking-features {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .feature-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            color: #64748b;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .feature-item i {
+            font-size: 24px;
+            color: #667eea;
+        }
+
+        .booking-form {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #374151;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-group label i {
+            color: #667eea;
+            font-size: 16px;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 15px 20px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: #f9fafb;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            background: white;
+        }
+
+        .form-group input::placeholder {
+            color: #9ca3af;
+        }
+
+        .booking-submit-btn {
+            width: 100%;
+            padding: 18px 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 10px;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .booking-submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .booking-submit-btn i {
+            font-size: 20px;
+        }
+
+        .booking-footer {
+            padding: 20px 30px !important;
+            background: #f8fafc !important;
+            border-top: 1px solid #e5e7eb !important;
+            text-align: center !important;
+        }
+
+        .booking-cancel-btn {
+            background: #6b7280 !important;
+            color: white !important;
+            border: none !important;
+            padding: 12px 24px !important;
+            border-radius: 8px !important;
+            cursor: pointer !important;
+            font-weight: 500 !important;
+            transition: all 0.3s ease !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+        }
+
+        .booking-cancel-btn:hover {
+            background: #4b5563 !important;
+            transform: translateY(-1px) !important;
+        }
+
+        /* Responsive Design for Booking Modal */
+        @media (max-width: 768px) {
+            .booking-modal-content {
+                margin: 10px !important;
+                max-width: none !important;
+            }
+
+            .booking-header {
+                padding: 30px 20px 20px !important;
+            }
+
+            .booking-header h3 {
+                font-size: 24px !important;
+            }
+
+            .booking-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 24px;
+            }
+
+            .booking-features {
+                flex-direction: column;
+                gap: 15px;
+                padding: 15px;
+            }
+
+            .feature-item {
+                flex-direction: row;
+                justify-content: center;
+            }
+
+            .booking-form {
+                padding: 20px;
+            }
+
+            .form-group input,
+            .form-group select {
+                padding: 12px 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Header & Navigation -->
+    <header>
+        <div class="container">
+            <nav class="navbar">
+                <a href="#home" class="logo">
+                    <i class="fas fa-brain"></i> Aidaddy
+                </a>
+                <div class="hamburger">
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                    <span class="bar"></span>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#solutions">Solutions</a></li>
+                    <li><a href="#">Case Studies</a></li>
+                    <li><a href="#footer">About Us</a></li>
+                </ul>
+                <!-- <a href="#" class="cta-button">Get Started</a> -->
+            </nav>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1>Transform Your Business with Advanced AI Solutions</h1>
+                    <p>Leverage cutting-edge artificial intelligence to automate processes, gain insights, and drive
+                        innovation in your organization.</p>
+                    <div class="hero-buttons">
+                        <a href="/get-started" target="_blank" class="cta-button">Get Started</a>
+                        <a href="/demo" class="secondary-button">View Demo</a>
+                    </div>
+                </div>
+                <div class="hero-image">
+                    <img src="https://images.unsplash.com/photo-1677442136019-21780ecad995?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+                        alt="AI Visualization">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services" id="services">
+        <div class="container">
+            <div class="section-title">
+                <h2>Our AI Services</h2>
+                <p>We offer a comprehensive suite of AI solutions tailored to your business needs</p>
+            </div>
+            <div class="services-grid">
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <h3>AI Automation</h3>
+                    <p>Streamline operations and reduce manual tasks with intelligent automation solutions.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Predictive Analytics</h3>
+                    <p>Forecast trends and make data-driven decisions with our advanced analytics platform.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-comments"></i>
+                    </div>
+                    <h3>Natural Language Processing</h3>
+                    <p>Understand and process human language to enhance customer interactions and insights.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-eye"></i>
+                    </div>
+                    <h3>Computer Vision</h3>
+                    <p>Extract meaningful information from visual data for improved decision making.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <h3>Custom AI Solutions</h3>
+                    <p>Tailored AI implementations designed specifically for your unique business challenges.</p>
+                </div>
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>AI Security</h3>
+                    <p>Protect your digital assets with AI-powered threat detection and prevention systems.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="solutions">
+        <div class="container">
+            <div class="section-title">
+                <h2>Why Choose Aidaddy?</h2>
+                <p>We combine cutting-edge technology with industry expertise to deliver exceptional results</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-image">
+                    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80"
+                        alt="AI Technology">
+                </div>
+                <div class="feature-list">
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <div class="feature-text">
+                            <h3>Lightning Fast Implementation</h3>
+                            <p>Get your AI solutions up and running in weeks, not months, with our streamlined process.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="feature-text">
+                            <h3>Expert Team</h3>
+                            <p>Work with our team of AI specialists, data scientists, and industry experts.</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-hand-holding-usd"></i>
+                        </div>
+                        <div class="feature-text">
+                            <h3>Cost-Effective Solutions</h3>
+                            <p>Maximize ROI with our scalable AI solutions that grow with your business.</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <div class="feature-text">
+                            <h3>24/7 Support</h3>
+                            <p>Round-the-clock technical support to ensure your AI systems run smoothly.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <h2>Ready to Transform Your Business with AI?</h2>
+            <p>Join hundreds of companies already leveraging our AI solutions to drive growth and innovation.</p>
+            <a href="/get-started" target="_blank" class="cta-button">Get Started Today</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer id="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <h3>About Aidaddy</h3>
+                    <p>We are a leading AI services provider, helping businesses harness the power of artificial
+                        intelligence to solve complex challenges and drive innovation.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="footer-column">
+                    <h3>Our Services</h3>
+                    <ul class="footer-links">
+                        <li><a href="#services">AI Automation</a></li>
+                        <li><a href="#services">Machine Learning</a></li>
+                        <li><a href="#services">Predictive Analytics</a></li>
+                        <li><a href="#services">Natural Language Processing</a></li>
+                        <li><a href="#services">Computer Vision</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#footer">About Us</a></li>
+                        <li><a href="#">Case Studies</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-column">
+                    <h3>Contact Us</h3>
+                    <ul class="footer-links">
+                        <li><i class="fas fa-phone"></i> 9346315162</li>
+                        <li><i class="fas fa-envelope"></i> aidaddy.in@gmail.com</li>
+                    </ul>
+                    <form id="contact-form">
+                        <label for="name">Name</label>
+                        <input type="text" id="name" name="name" placeholder="Enter your name" required>
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" placeholder="Enter your email" required>
+                        <label for="message">Message</label>
+                        <textarea id="message" name="message" placeholder="Enter your message" required></textarea>
+                        <button type="submit" class="cta-button">Send Message</button>
+                    </form>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2025-2026 Aidaddy.in. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        const BACKEND_URL = '';
+        // Simple script for smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Header scroll effect
+        window.addEventListener('scroll', function () {
+            const header = document.querySelector('header');
+            if (window.scrollY > 100) {
+                header.style.boxShadow = '0 5px 15px rgba(0, 0, 0, 0.1)';
+            } else {
+                header.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.1)';
+            }
+        });
+
+        // Hamburger menu toggle
+        const hamburger = document.querySelector('.hamburger');
+        const navLinks = document.querySelector('.nav-links');
+
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            hamburger.classList.toggle('active');
+        });
+
+        // Close menu when clicking a link
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+                hamburger.classList.remove('active');
+            });
+        });
+
+        // Contact form submission (uses build-time BACKEND_URL)
+        document.getElementById('contact-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const data = {
+                name: formData.get('name'),
+                email: formData.get('email'),
+                message: formData.get('message')
+            };
+            fetch(`${BACKEND_URL}/contact`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.message);
+                    this.reset();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred. Please try again.');
+                });
+        });
+    </script>
+
+    <!-- Modal Structure -->
+    <div id="modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Notification</h3>
+            </div>
+            <div class="modal-body">
+                <div id="modal-icon"></div>
+                <p id="modal-message"></p>
+            </div>
+            <div class="modal-footer">
+                <button id="modal-btn" class="btn-modal">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirm-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Confirm Action</h3>
+            </div>
+            <div class="modal-body">
+                <i class="fas fa-exclamation-triangle"
+                    style="font-size: 48px; color: #f59e0b; margin-bottom: 15px;"></i>
+                <p id="confirm-message">Are you sure you want to proceed?</p>
+            </div>
+            <div class="modal-footer">
+                <button id="confirm-yes" class="btn-modal btn-success">Yes</button>
+                <button id="confirm-no" class="btn-modal" style="background-color: #6b7280;">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Meeting Booking Modal -->
+    <div id="booking-modal" class="modal">
+        <div class="modal-content booking-modal-content">
+            <div class="modal-header booking-header">
+                <div class="booking-icon">
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <h3>Book Your AI Consultation</h3>
+                <p class="booking-subtitle">Schedule a 30-minute session with our AI experts</p>
+            </div>
+            <div class="modal-body booking-body">
+                <div class="booking-features">
+                    <div class="feature-item">
+                        <i class="fas fa-clock"></i>
+                        <span>30-minute session</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-user-tie"></i>
+                        <span>Expert consultation</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="fas fa-video"></i>
+                        <span>Online meeting</span>
+                    </div>
+                </div>
+
+                <form id="booking-form" class="booking-form">
+                    <div class="form-group">
+                        <label for="booking-name">
+                            <i class="fas fa-user"></i>
+                            Full Name
+                        </label>
+                        <input type="text" id="booking-name" name="name" placeholder="Enter your full name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="booking-email">
+                            <i class="fas fa-envelope"></i>
+                            Email Address
+                        </label>
+                        <input type="email" id="booking-email" name="email" placeholder="your.email@example.com"
+                            required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="time-slot">
+                            <i class="fas fa-calendar-alt"></i>
+                            Select Time Slot
+                        </label>
+                        <select id="time-slot" name="datetime" required>
+                            <option value="">Loading available slots...</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="booking-submit-btn">
+                        <i class="fas fa-calendar-plus"></i>
+                        Book My Meeting
+                    </button>
+                </form>
+            </div>
+            <div class="modal-footer booking-footer">
+                <button id="booking-close" class="booking-cancel-btn">
+                    <i class="fas fa-times"></i>
+                    Cancel
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Modal functions
+        function showModal(title, message, type = 'info', callback = null) {
+            const modal = document.getElementById('modal');
+            const modalTitle = document.getElementById('modal-title');
+            const modalIcon = document.getElementById('modal-icon');
+            const modalMessage = document.getElementById('modal-message');
+            const modalBtn = document.getElementById('modal-btn');
+
+            modalTitle.textContent = title;
+            modalMessage.textContent = message;
+
+            // Clear previous icon
+            modalIcon.innerHTML = '';
+
+            // Set icon and button style based on type
+            if (type === 'success') {
+                modalIcon.innerHTML = '<i class="fas fa-check-circle icon-success"></i>';
+                modalBtn.className = 'btn-modal btn-success';
+            } else if (type === 'error') {
+                modalIcon.innerHTML = '<i class="fas fa-times-circle icon-error"></i>';
+                modalBtn.className = 'btn-modal btn-error';
+            } else {
+                modalIcon.innerHTML = '<i class="fas fa-info-circle" style="font-size: 48px; color: #2563eb; margin-bottom: 15px;"></i>';
+                modalBtn.className = 'btn-modal';
+            }
+
+            modal.style.display = 'block';
+
+            modalBtn.onclick = function () {
+                modal.style.display = 'none';
+                if (callback) callback();
+            };
+
+            // Close modal when clicking outside
+            window.onclick = function (event) {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                    if (callback) callback();
+                }
+            };
+        }
+
+        function showConfirm(message, callback) {
+            const modal = document.getElementById('confirm-modal');
+            const confirmMessage = document.getElementById('confirm-message');
+            const yesBtn = document.getElementById('confirm-yes');
+            const noBtn = document.getElementById('confirm-no');
+
+            confirmMessage.textContent = message;
+            modal.style.display = 'block';
+
+            return new Promise((resolve) => {
+                yesBtn.onclick = function () {
+                    modal.style.display = 'none';
+                    resolve(true);
+                };
+
+                noBtn.onclick = function () {
+                    modal.style.display = 'none';
+                    resolve(false);
+                };
+
+                // Close modal when clicking outside
+                window.onclick = function (event) {
+                    if (event.target === modal) {
+                        modal.style.display = 'none';
+                        resolve(false);
+                    }
+                };
+            });
+        }
+
+        // Update contact form to use beautiful modals with better error handling
+        document.getElementById('contact-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            const data = {
+                name: formData.get('name'),
+                email: formData.get('email'),
+                message: formData.get('message')
+            };
+
+            showModal('Sending...', 'Please wait while we send your message...', 'info');
+
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 30000); // 30s timeout
+
+            fetch(`${BACKEND_URL}/contact`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+                signal: controller.signal,
+                credentials: 'omit',
+                mode: 'cors'
+            })
+                .then(response => {
+                    clearTimeout(timeoutId);
+                    if (!response.ok) {
+                        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.message && data.message.toLowerCase().includes('thank you')) {
+                        showModal('Success!', data.message, 'success', () => {
+                            document.getElementById('contact-form').reset();
+                        });
+                    } else if (data.message) {
+                        showModal('Message Sent', data.message, 'success', () => {
+                            document.getElementById('contact-form').reset();
+                        });
+                    } else {
+                        showModal('Error', 'Unexpected response from server.', 'error');
+                    }
+                })
+                .catch(error => {
+                    clearTimeout(timeoutId);
+                    console.error('Contact form error:', error);
+                    if (error.name === 'AbortError') {
+                        showModal('Timeout', 'Request took too long. Please check your connection and try again.', 'error');
+                    } else {
+                        showModal('Connection Error', `Failed to send message: ${error.message}. Make sure the backend is running.`, 'error');
+                    }
+                });
+        });
+
+        // Meeting Booking Modal
+        function openBookingModal() {
+            const modal = document.getElementById('booking-modal');
+            modal.style.display = 'block';
+
+            // Load available time slots
+            fetch(`${BACKEND_URL}/api/available-slots`)
+                .then(response => response.json())
+                .then(data => {
+                    const select = document.getElementById('time-slot');
+                    select.innerHTML = '<option value="">Select a time slot...</option>';
+
+                    data.slots.forEach(slot => {
+                        const option = document.createElement('option');
+                        option.value = slot.datetime;
+                        option.textContent = slot.display;
+                        select.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading slots:', error);
+                    showModal('Error', 'Failed to load available time slots. Please try again.', 'error');
+                });
+        }
+
+        // Close booking modal
+        document.getElementById('booking-close').addEventListener('click', function () {
+            document.getElementById('booking-modal').style.display = 'none';
+        });
+
+        // Handle booking form submission
+        document.getElementById('booking-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const formData = new FormData(this);
+            const data = {
+                name: formData.get('name'),
+                email: formData.get('email'),
+                datetime: formData.get('datetime')
+            };
+
+            // Close booking modal and show loading
+            document.getElementById('booking-modal').style.display = 'none';
+            showModal('Booking Meeting...', 'Please wait while we schedule your meeting...', 'info');
+
+            fetch(`${BACKEND_URL}/book-meeting`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message.includes('successfully')) {
+                        showModal('Meeting Booked!', data.message, 'success', () => {
+                            document.getElementById('booking-form').reset();
+                        });
+                    } else {
+                        showModal('Booking Failed', data.message, 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    showModal('Error', 'Failed to book meeting. Please try again.', 'error');
+                });
+        });
+
+        // Keep service alive by pinging every 2 minutes (for testing)
+        setInterval(() => {
+            fetch(BACKEND_URL, { mode: 'no-cors', credentials: 'omit' }).catch(() => { });
+        }, 2 * 60 * 1000); // 2 minutes
+
+    </script>
+</body>
+
+
+</html>
