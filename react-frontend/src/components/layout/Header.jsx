@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import styles from './Header.module.css';
+import logo from '../../../media/aidaddy_logo.png';
 
 const Header = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -27,8 +28,8 @@ const Header = () => {
             <div className={styles.container}>
                 <nav className={styles.navbar}>
                     <Link to="/" className={styles.logo}>
-                        <i className="fas fa-robot"></i>
-                        Aidaddy
+                        <img src={logo} alt="Aidaddy Logo" className={styles.logoImage} />
+                        <span className={styles.logoText}>Aidaddy</span>
                     </Link>
 
                     <div className={`${styles.hamburger} ${isMenuOpen ? styles.active : ''}`} onClick={toggleMenu}>

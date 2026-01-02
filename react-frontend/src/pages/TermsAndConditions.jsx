@@ -12,7 +12,7 @@ function TermsAndConditions() {
             <div className={styles.termsContainer}>
                 <div className={styles.termsContent}>
                     <h1>Terms and Conditions</h1>
-                    <p className={styles.lastUpdated}>Last Updated: December 1, 2025</p>
+                    <p className={styles.lastUpdated}>Last Updated: January 2, 2026</p>
 
                     <div className={styles.intro}>
                         <p>
@@ -114,8 +114,76 @@ function TermsAndConditions() {
                         </ul>
                     </section> */}
 
-                    <section className={styles.section}>
-                        <h2>7. AI Services and Solutions</h2>
+                    <section className={styles.section}>                        <h2>6. Free Trial Project Program</h2>
+
+                        <h3>6.1 Eligibility</h3>
+                        <p>
+                            Aidaddy offers a free small project trial to qualifying first-time clients. This program is designed to
+                            demonstrate our capabilities and allow potential clients to experience our service quality.
+                        </p>
+                        <ul>
+                            <li>The free trial is available only to new clients who have not previously engaged Aidaddy for paid services</li>
+                            <li>One free trial project per client/organization</li>
+                            <li>Project scope must be approved by Aidaddy and meet our small project criteria</li>
+                            <li>We reserve the right to decline free trial requests at our discretion</li>
+                        </ul>
+
+                        <h3>6.2 Small Project Definition</h3>
+                        <p>A "small project" under this free trial program is defined as:</p>
+                        <ul>
+                            <li><strong>Timeline:</strong> Projects that can be completed within 10-15 calendar days</li>
+                            <li><strong>Scope:</strong> Single-feature or limited-scope AI implementations</li>
+                            <li><strong>Complexity:</strong> Projects requiring basic to intermediate technical implementation</li>
+                            <li><strong>Examples:</strong> Simple chatbot integration, basic data analysis dashboard, small ML model,
+                                document processing automation, or similar scoped work</li>
+                        </ul>
+
+                        <h3>6.3 Project Approval Process</h3>
+                        <p>
+                            All free trial project requests are subject to approval:
+                        </p>
+                        <ul>
+                            <li>Submit your project idea through our contact form or booking system</li>
+                            <li>Our team will evaluate whether the project meets small project criteria</li>
+                            <li>You will receive confirmation within 2-3 business days</li>
+                            <li>Projects exceeding the small project scope may be quoted as paid projects with a discount</li>
+                        </ul>
+
+                        <h3>6.4 Deliverables and Quality</h3>
+                        <ul>
+                            <li>Free trial projects receive the same quality standards as our paid projects</li>
+                            <li>Full development cycle included: analysis, development, testing, and deployment</li>
+                            <li>Source code and documentation provided upon completion</li>
+                            <li>Basic support during the project delivery period</li>
+                        </ul>
+
+                        <h3>6.5 Limitations and Restrictions</h3>
+                        <ul>
+                            <li>Post-project maintenance and updates are not included in the free trial</li>
+                            <li>Hosting, infrastructure, and third-party API costs (if applicable) are the client's responsibility</li>
+                            <li>Projects requiring specialized hardware or premium third-party services may not qualify</li>
+                            <li>Ongoing support beyond the delivery period requires a separate service agreement</li>
+                            <li>We reserve the right to use the project (with client permission) as a portfolio/case study example</li>
+                        </ul>
+
+                        <h3>6.6 Intellectual Property</h3>
+                        <p>
+                            Upon successful completion and delivery of the free trial project:
+                        </p>
+                        <ul>
+                            <li>The client owns all deliverables and source code created specifically for their project</li>
+                            <li>Aidaddy retains ownership of proprietary frameworks, tools, and methodologies used</li>
+                            <li>Both parties agree not to disclose confidential information without consent</li>
+                        </ul>
+
+                        <h3>6.7 Program Modifications</h3>
+                        <p>
+                            Aidaddy reserves the right to modify, suspend, or terminate the free trial program at any time without
+                            prior notice. Ongoing approved projects will be honored even if the program is discontinued.
+                        </p>
+                    </section>
+
+                    <section className={styles.section}>                        <h2>7. AI Services and Solutions</h2>
 
                         <h3>7.1 AI Accuracy</h3>
                         <p>

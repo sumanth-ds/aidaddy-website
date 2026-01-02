@@ -28,11 +28,24 @@
     font-weight: 700;
     color: var(--primary);
     text-decoration: none;
+    gap: 12px;
 }
 
-.logo i {
-    margin-right: 10px;
-    color: var(--secondary);
+.logoImage {
+    height: 45px;
+    width: auto;
+    object-fit: contain;
+    transition: var(--transition);
+}
+
+.logo:hover .logoImage {
+    transform: scale(1.05);
+}
+
+.logoText {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--primary);
 }
 
 .navLinks {

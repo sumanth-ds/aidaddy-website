@@ -155,6 +155,102 @@
     font-weight: 700;
 }
 
+.shortDescription {
+    color: var(--text-light);
+    line-height: 1.7;
+    margin-bottom: 20px;
+}
+
+.learnMoreBtn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 25px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    margin-top: 10px;
+}
+
+.learnMoreBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+.learnMoreBtn:active {
+    transform: translateY(0);
+}
+
+.expandedContent {
+    margin-top: 25px;
+    padding-top: 25px;
+    border-top: 2px solid rgba(102, 126, 234, 0.1);
+    text-align: left;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        max-height: 0;
+    }
+
+    to {
+        opacity: 1;
+        max-height: 500px;
+    }
+}
+
+.detailsText {
+    color: #475569;
+    line-height: 1.8;
+    margin-bottom: 20px;
+    font-size: 1rem;
+}
+
+.examplesSection {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+    padding: 20px;
+    border-radius: 12px;
+    border-left: 4px solid #667eea;
+}
+
+.examplesSection h4 {
+    color: #1e293b;
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.examplesList {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.examplesList li {
+    color: #475569;
+    padding: 8px 0;
+    display: flex;
+    align-items: flex-start;
+    line-height: 1.6;
+}
+
+.examplesList li i {
+    color: #667eea;
+    margin-right: 12px;
+    margin-top: 4px;
+    font-size: 0.9rem;
+    flex-shrink: 0;
+}
+
+.serviceCard.expanded {
+    grid-column: span 1;
+}
+
 .serviceCard p {
     color: var(--text-light);
     line-height: 1.7;
@@ -167,5 +263,13 @@
 
     .sectionTitle h2 {
         font-size: 2rem;
+    }
+
+    .serviceCard {
+        padding: 30px 20px;
+    }
+
+    .expandedContent {
+        font-size: 0.95rem;
     }
 }
