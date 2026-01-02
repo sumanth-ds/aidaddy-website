@@ -86,7 +86,7 @@ def send_contact_email(mail, name, email, message):
 
     return result
 
-def send_meeting_email(mail, name, email, meeting_datetime, meeting_link):
+def send_meeting_email(mail, name, email, phone, company, company_url, project_type, budget, message, meeting_datetime, meeting_link):
     # Send to user
     user_msg = Message('Your Meeting is Scheduled - Aidaddy',
                       recipients=[email])
@@ -180,6 +180,14 @@ Aidaddy Team"""
 Client Details:
 - Name: {name}
 - Email: {email}
+- Phone: {phone or 'Not provided'}
+- Company: {company or 'Not provided'}
+- Website: {company_url or 'Not provided'}
+
+Project Information:
+- Project Type: {project_type or 'Not provided'}
+- Budget: {budget or 'Not provided'}
+- Message: {message or 'Not provided'}
 
 Meeting Details:
 - Date & Time: {meeting_datetime.strftime('%A, %B %d, %Y at %I:%M %p')}
@@ -196,7 +204,10 @@ Please be prepared for the meeting."""
             .header {{ background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }}
             .content {{ background-color: #f9f9f9; padding: 20px; border-radius: 0 0 5px 5px; }}
             .client-info {{ background: white; padding: 15px; border-radius: 5px; margin: 15px 0; }}
+            .project-info {{ background: white; padding: 15px; border-radius: 5px; margin: 15px 0; border-left: 4px solid #667eea; }}
             .meeting-info {{ background: white; padding: 15px; border-radius: 5px; border-left: 4px solid #10b981; margin: 15px 0; }}
+            .detail-row {{ margin: 8px 0; }}
+            .detail-label {{ font-weight: bold; color: #555; }}
         </style>
     </head>
     <body>
@@ -209,8 +220,18 @@ Please be prepared for the meeting."""
                 
                 <div class="client-info">
                     <h3>👤 Client Information</h3>
-                    <p><strong>Name:</strong> {name}</p>
-                    <p><strong>Email:</strong> {email}</p>
+                    <div class="detail-row"><span class="detail-label">Name:</span> {name}</div>
+                    <div class="detail-row"><span class="detail-label">Email:</span> {email}</div>
+                    <div class="detail-row"><span class="detail-label">Phone:</span> {phone or 'Not provided'}</div>
+                    <div class="detail-row"><span class="detail-label">Company:</span> {company or 'Not provided'}</div>
+                    <div class="detail-row"><span class="detail-label">Website:</span> {f'<a href="{company_url}" target="_blank">{company_url}</a>' if company_url else 'Not provided'}</div>
+                </div>
+                
+                <div class="project-info">
+                    <h3>💼 Project Information</h3>
+                    <div class="detail-row"><span class="detail-label">Project Type:</span> {project_type or 'Not provided'}</div>
+                    <div class="detail-row"><span class="detail-label">Budget:</span> {budget or 'Not provided'}</div>
+                    <div class="detail-row"><span class="detail-label">Message:</span><br>{message.replace(chr(10), '<br>') if message else 'Not provided'}</div>
                 </div>
                 
                 <div class="meeting-info">
@@ -229,7 +250,7 @@ Please be prepared for the meeting."""
     
     mail.send(company_msg)
 
-def send_meeting_request_confirmation_email(mail, name, email, meeting_datetime):
+def send_meeting_request_confirmation_email(mail, name, email, phone, company, company_url, project_type, budget, message, meeting_datetime):
     # Send confirmation to user
     user_msg = Message('Meeting Request Received - Aidaddy',
                       recipients=[email])
@@ -238,9 +259,23 @@ def send_meeting_request_confirmation_email(mail, name, email, meeting_datetime)
 
 Thank you for requesting a meeting with Aidaddy!
 
-We have received your meeting request for:
+We have received your meeting request with the following details:
+
+Meeting Information:
 - Date & Time: {meeting_datetime.strftime('%A, %B %d, %Y at %I:%M %p')}
 - Duration: 30 minutes
+
+Your Information:
+- Name: {name}
+- Email: {email}
+- Phone: {phone}
+- Company: {company or 'Not provided'}
+- Website: {company_url or 'Not provided'}
+
+Project Details:
+- Project Type: {project_type}
+- Budget: {budget}
+- Message: {message}
 
 Our team will review your request and provide a meeting link shortly. You will receive a confirmation email with the meeting details once the link is ready.
 
@@ -258,8 +293,11 @@ Aidaddy Team"""
             .header {{ background: linear-gradient(135deg, #f59e0b, #d97706); color: white; padding: 30px 20px; text-align: center; border-radius: 10px 10px 0 0; }}
             .content {{ background-color: #f9f9f9; padding: 30px 20px; border-radius: 0 0 10px 10px; }}
             .meeting-details {{ background: white; padding: 20px; border-radius: 8px; border-left: 4px solid #f59e0b; margin: 20px 0; }}
+            .info-section {{ background: white; padding: 15px; border-radius: 8px; margin: 15px 0; }}
             .next-steps {{ background: #fef3c7; padding: 15px; border-radius: 5px; border-left: 4px solid #f59e0b; margin: 20px 0; }}
             .footer {{ text-align: center; margin-top: 30px; color: #666; font-size: 12px; }}
+            .detail-row {{ margin: 8px 0; }}
+            .detail-label {{ font-weight: bold; color: #555; }}
         </style>
     </head>
     <body>
@@ -277,6 +315,22 @@ Aidaddy Team"""
                     <h3>📋 Your Requested Meeting Time</h3>
                     <p><strong>Date & Time:</strong> {meeting_datetime.strftime('%A, %B %d, %Y at %I:%M %p')}</p>
                     <p><strong>Duration:</strong> 30 minutes</p>
+                </div>
+                
+                <div class="info-section">
+                    <h3>👤 Your Information</h3>
+                    <div class="detail-row"><span class="detail-label">Name:</span> {name}</div>
+                    <div class="detail-row"><span class="detail-label">Email:</span> {email}</div>
+                    <div class="detail-row"><span class="detail-label">Phone:</span> {phone}</div>
+                    <div class="detail-row"><span class="detail-label">Company:</span> {company or 'Not provided'}</div>
+                    <div class="detail-row"><span class="detail-label">Website:</span> {f'<a href="{company_url}" target="_blank">{company_url}</a>' if company_url else 'Not provided'}</div>
+                </div>
+                
+                <div class="info-section">
+                    <h3>💼 Project Details</h3>
+                    <div class="detail-row"><span class="detail-label">Project Type:</span> {project_type}</div>
+                    <div class="detail-row"><span class="detail-label">Budget:</span> {budget}</div>
+                    <div class="detail-row"><span class="detail-label">Message:</span><br>{message.replace(chr(10), '<br>')}</div>
                 </div>
                 
                 <div class="next-steps">
@@ -303,7 +357,7 @@ Aidaddy Team"""
     
     mail.send(user_msg)
 
-def send_meeting_request_email(mail, name, email, meeting_datetime):
+def send_meeting_request_email(mail, name, email, phone, company, company_url, project_type, budget, message, meeting_datetime):
     # Send meeting request to company only
     company_msg = Message('New Meeting Request - Aidaddy',
                          recipients=[os.getenv('MAIL_USERNAME')])  # Send to company email
@@ -313,6 +367,14 @@ def send_meeting_request_email(mail, name, email, meeting_datetime):
 Client Details:
 - Name: {name}
 - Email: {email}
+- Phone: {phone}
+- Company: {company or 'Not provided'}
+- Website: {company_url or 'Not provided'}
+
+Project Information:
+- Project Type: {project_type}
+- Budget: {budget}
+- Message: {message}
 
 Requested Meeting Time:
 - Date & Time: {meeting_datetime.strftime('%A, %B %d, %Y at %I:%M %p')}
@@ -329,8 +391,11 @@ Please review this request and provide a meeting link through the admin dashboar
             .header {{ background: linear-gradient(135deg, #f59e0b, #d97706); color: white; padding: 20px; text-align: center; border-radius: 5px 5px 0 0; }}
             .content {{ background-color: #f9f9f9; padding: 20px; border-radius: 0 0 5px 5px; }}
             .client-info {{ background: white; padding: 15px; border-radius: 5px; margin: 15px 0; }}
+            .project-info {{ background: white; padding: 15px; border-radius: 5px; margin: 15px 0; border-left: 4px solid #667eea; }}
             .meeting-info {{ background: white; padding: 15px; border-radius: 5px; border-left: 4px solid #f59e0b; margin: 15px 0; }}
             .action-required {{ background: #fef3c7; padding: 15px; border-radius: 5px; border-left: 4px solid #f59e0b; margin: 15px 0; }}
+            .detail-row {{ margin: 8px 0; }}
+            .detail-label {{ font-weight: bold; color: #555; }}
         </style>
     </head>
     <body>
@@ -343,8 +408,18 @@ Please review this request and provide a meeting link through the admin dashboar
                 
                 <div class="client-info">
                     <h3>👤 Client Information</h3>
-                    <p><strong>Name:</strong> {name}</p>
-                    <p><strong>Email:</strong> {email}</p>
+                    <div class="detail-row"><span class="detail-label">Name:</span> {name}</div>
+                    <div class="detail-row"><span class="detail-label">Email:</span> {email}</div>
+                    <div class="detail-row"><span class="detail-label">Phone:</span> {phone}</div>
+                    <div class="detail-row"><span class="detail-label">Company:</span> {company or 'Not provided'}</div>
+                    <div class="detail-row"><span class="detail-label">Website:</span> {f'<a href="{company_url}" target="_blank">{company_url}</a>' if company_url else 'Not provided'}</div>
+                </div>
+                
+                <div class="project-info">
+                    <h3>💼 Project Information</h3>
+                    <div class="detail-row"><span class="detail-label">Project Type:</span> {project_type}</div>
+                    <div class="detail-row"><span class="detail-label">Budget:</span> {budget}</div>
+                    <div class="detail-row"><span class="detail-label">Message:</span><br>{message.replace(chr(10), '<br>')}</div>
                 </div>
                 
                 <div class="meeting-info">

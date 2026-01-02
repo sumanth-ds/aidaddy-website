@@ -356,10 +356,17 @@ def get_available_slots():
 @app.route('/book-meeting', methods=['POST'])
 def book_meeting():
     data = request.json
+    print(f"DEBUG: Raw request data: {data}")
     name = data.get('name')
     email = data.get('email')
+    phone = data.get('phone')
+    company = data.get('company')
+    company_url = data.get('companyUrl')
+    project_type = data.get('projectType')
+    budget = data.get('budget')
+    message = data.get('message')
     datetime_str = data.get('datetime')
-    print(f"Received booking request: name={name}, email={email}, datetime={datetime_str}")
+    print(f"DEBUG: Extracted values - name={name}, email={email}, phone={phone}, company={company}, company_url={company_url}, project_type={project_type}, budget={budget}, message={message[:50] if message else None}, datetime={datetime_str}")
     
     try:
         meeting_datetime = datetime.fromisoformat(datetime_str)
@@ -369,10 +376,16 @@ def book_meeting():
         if existing_meeting:
             return jsonify({"message": "This time slot is no longer available. Please choose another time."}), 400
         
-        # Save meeting request to database (without meeting link)
+        # Save meeting request to database with all fields
         result = mongo.db.meetings.insert_one({
             "name": name,
             "email": email,
+            "phone": phone,
+            "company": company,
+            "company_url": company_url,
+            "project_type": project_type,
+            "budget": budget,
+            "message": message,
             "meeting_datetime": meeting_datetime,
             "timestamp": datetime.now(),
             "meeting_link": "",  # Will be provided later by admin
@@ -384,7 +397,7 @@ def book_meeting():
         email_result = { 'user': False, 'admin': False, 'errors': [] }
         try:
             try:
-                send_meeting_request_confirmation_email(mail, name, email, meeting_datetime)
+                send_meeting_request_confirmation_email(mail, name, email, phone, company, company_url, project_type, budget, message, meeting_datetime)
                 email_result['user'] = True
             except Exception as e:
                 print(f"Email sending to user failed: {e}")
@@ -393,7 +406,7 @@ def book_meeting():
 
             try:
                 # Notify the company/admin
-                send_meeting_request_email(mail, name, email, meeting_datetime)
+                send_meeting_request_email(mail, name, email, phone, company, company_url, project_type, budget, message, meeting_datetime)
                 email_result['admin'] = True
             except Exception as e:
                 print(f"Email sending to admin failed: {e}")
@@ -746,7 +759,19 @@ def provide_meeting_link(meeting_id):
         )
         
         # Send confirmation email to client
-        send_meeting_email(mail, meeting.get('name'), meeting.get('email'), meeting.get('meeting_datetime'), meeting_link)
+        send_meeting_email(
+            mail, 
+            meeting.get('name'), 
+            meeting.get('email'),
+            meeting.get('phone'),
+            meeting.get('company'),
+            meeting.get('company_url'),
+            meeting.get('project_type'),
+            meeting.get('budget'),
+            meeting.get('message'),
+            meeting.get('meeting_datetime'), 
+            meeting_link
+        )
         
         # Also send notification to admin that the link has been provided
         admin_msg = Message('Meeting Link Provided - Aidaddy',

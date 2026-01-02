@@ -13,7 +13,16 @@ const Booking = () => {
     const [slots, setSlots] = useState([]);
     const [loading, setLoading] = useState(true);
     const [selectedSlot, setSelectedSlot] = useState(null);
-    const [formData, setFormData] = useState({ name: '', email: '' });
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        phone: '',
+        company: '',
+        companyUrl: '',
+        projectType: '',
+        budget: '',
+        message: ''
+    });
     const [modal, setModal] = useState({ isOpen: false, type: 'info', title: '', message: '' });
     const [submitting, setSubmitting] = useState(false);
     const [view, setView] = useState('week'); // day, week, month
@@ -103,11 +112,22 @@ const Booking = () => {
 
         setSubmitting(true);
         try {
-            const response = await apiService.bookMeeting({
+            const bookingData = {
                 name: formData.name,
                 email: formData.email,
+                phone: formData.phone,
+                company: formData.company,
+                companyUrl: formData.companyUrl,
+                projectType: formData.projectType,
+                budget: formData.budget,
+                message: formData.message,
                 datetime: selectedSlot.datetime
-            });
+            };
+
+            // Log the booking data for debugging
+            console.log('Submitting booking with data:', bookingData);
+
+            const response = await apiService.bookMeeting(bookingData);
 
             setModal({
                 isOpen: true,
@@ -117,7 +137,16 @@ const Booking = () => {
             });
 
             // Reset form
-            setFormData({ name: '', email: '' });
+            setFormData({
+                name: '',
+                email: '',
+                phone: '',
+                company: '',
+                companyUrl: '',
+                projectType: '',
+                budget: '',
+                message: ''
+            });
             setSelectedSlot(null);
             // Refresh slots
             fetchSlots();
@@ -396,6 +425,115 @@ const Booking = () => {
                                                     onChange={handleChange}
                                                     required
                                                 />
+                                            </div>
+                                        </div>
+
+                                        <div className={styles.field}>
+                                            <label htmlFor="phone">Phone Number</label>
+                                            <div className={styles.inputWrapper}>
+                                                <i className="fas fa-phone"></i>
+                                                <input
+                                                    type="tel"
+                                                    id="phone"
+                                                    name="phone"
+                                                    placeholder="+1 (555) 123-4567"
+                                                    value={formData.phone}
+                                                    onChange={handleChange}
+                                                    required
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className={styles.field}>
+                                            <label htmlFor="company">Company Name</label>
+                                            <div className={styles.inputWrapper}>
+                                                <i className="fas fa-building"></i>
+                                                <input
+                                                    type="text"
+                                                    id="company"
+                                                    name="company"
+                                                    placeholder="Your Company Ltd."
+                                                    value={formData.company}
+                                                    onChange={handleChange}
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className={styles.field}>
+                                            <label htmlFor="companyUrl">Company Website</label>
+                                            <div className={styles.inputWrapper}>
+                                                <i className="fas fa-globe"></i>
+                                                <input
+                                                    type="url"
+                                                    id="companyUrl"
+                                                    name="companyUrl"
+                                                    placeholder="https://www.example.com"
+                                                    value={formData.companyUrl}
+                                                    onChange={handleChange}
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <div className={styles.field}>
+                                            <label htmlFor="projectType">Project Type</label>
+                                            <div className={styles.inputWrapper}>
+                                                <i className="fas fa-project-diagram"></i>
+                                                <select
+                                                    id="projectType"
+                                                    name="projectType"
+                                                    value={formData.projectType}
+                                                    onChange={handleChange}
+                                                    required
+                                                >
+                                                    <option value="">Select project type...</option>
+                                                    <option value="ai-consulting">AI Consulting</option>
+                                                    <option value="ml-engineering">Machine Learning Engineering</option>
+                                                    <option value="nlp-solutions">NLP Solutions</option>
+                                                    <option value="genai-solutions">Generative AI Solutions</option>
+                                                    <option value="business-analytics">Business Analytics</option>
+                                                    <option value="deep-learning">Deep Learning Projects</option>
+                                                    <option value="free-trial">Free Trial Project</option>
+                                                    <option value="other">Other</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div className={styles.field}>
+                                            <label htmlFor="budget">Project Budget</label>
+                                            <div className={styles.inputWrapper}>
+                                                <i className="fas fa-dollar-sign"></i>
+                                                <select
+                                                    id="budget"
+                                                    name="budget"
+                                                    value={formData.budget}
+                                                    onChange={handleChange}
+                                                    required
+                                                >
+                                                    <option value="">Select budget range...</option>
+                                                    <option value="free-trial">Free Trial Project</option>
+                                                    <option value="under-5k">Under $5,000</option>
+                                                    <option value="5k-10k">$5,000 - $10,000</option>
+                                                    <option value="10k-25k">$10,000 - $25,000</option>
+                                                    <option value="25k-50k">$25,000 - $50,000</option>
+                                                    <option value="50k-plus">$50,000+</option>
+                                                    <option value="not-sure">Not Sure Yet</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div className={styles.field + ' ' + styles.fullWidth}>
+                                            <label htmlFor="message">Project Details</label>
+                                            <div className={styles.inputWrapper}>
+                                                <i className="fas fa-comment-dots"></i>
+                                                <textarea
+                                                    id="message"
+                                                    name="message"
+                                                    placeholder="Tell us about your project, goals, and any specific requirements..."
+                                                    value={formData.message}
+                                                    onChange={handleChange}
+                                                    rows="4"
+                                                    required
+                                                ></textarea>
                                             </div>
                                         </div>
                                     </div>

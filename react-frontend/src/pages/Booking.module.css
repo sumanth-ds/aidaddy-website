@@ -455,7 +455,9 @@
     color: #94a3b8;
 }
 
-.inputWrapper input {
+.inputWrapper input,
+.inputWrapper select,
+.inputWrapper textarea {
     width: 100%;
     padding: 12px 15px 12px 45px;
     border: 2px solid #e2e8f0;
@@ -463,11 +465,73 @@
     font-size: 0.95rem;
     transition: all 0.2s;
     outline: none;
+    font-family: 'Inter', sans-serif;
 }
 
-.inputWrapper input:focus {
+.inputWrapper select {
+    cursor: pointer;
+    appearance: none;
+    background: white;
+    padding-right: 40px;
+    position: relative;
+    font-weight: 500;
+    color: #334155;
+    background-image: linear-gradient(45deg, transparent 50%, #667eea 50%),
+        linear-gradient(135deg, #667eea 50%, transparent 50%);
+    background-position: calc(100% - 20px) calc(1em + 2px),
+        calc(100% - 15px) calc(1em + 2px);
+    background-size: 5px 5px,
+        5px 5px;
+    background-repeat: no-repeat;
+    transition: all 0.3s ease;
+}
+
+.inputWrapper select:hover {
+    border-color: #667eea;
+    background-color: #f8f9ff;
+}
+
+.inputWrapper select option {
+    padding: 12px;
+    font-size: 0.95rem;
+    color: #334155;
+    background: white;
+}
+
+.inputWrapper select option:hover,
+.inputWrapper select option:checked {
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+    color: #667eea;
+    font-weight: 600;
+}
+
+.inputWrapper select option:disabled {
+    color: #94a3b8;
+    font-style: italic;
+}
+
+/* Enhanced select focus state */
+.inputWrapper select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.15);
+    background-image: linear-gradient(45deg, transparent 50%, #764ba2 50%),
+        linear-gradient(135deg, #764ba2 50%, transparent 50%);
+}
+
+.inputWrapper textarea {
+    resize: vertical;
+    min-height: 100px;
+    padding-top: 12px;
+}
+
+.inputWrapper input:focus,
+.inputWrapper textarea:focus {
     border-color: var(--primary);
     box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.field.fullWidth {
+    grid-column: 1 / -1;
 }
 
 .bookingSubmitBtn {
