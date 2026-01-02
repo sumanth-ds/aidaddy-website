@@ -22,6 +22,7 @@ import traceback
 from werkzeug.security import generate_password_hash, check_password_hash
 import uuid
 from bson import ObjectId
+from models import db, Contact, Meeting, Blog, Topic, SubTopic, BlogMedia
 
 class Pagination:
     def __init__(self, page, per_page, total):
@@ -77,6 +78,11 @@ else:
     app = Flask(__name__, template_folder=template_dir)
 app.secret_key = os.getenv('SECRET_KEY')
 
+# SQLAlchemy Database configuration for blogs
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI', 'sqlite:///aidaddy.db')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+db.init_app(app)
+
 # Mail configuration
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
 app.config['MAIL_PORT'] = 587
@@ -95,6 +101,7 @@ from urllib.parse import urlparse
 # Get production URL from environment if available
 production_url = os.getenv('PRODUCTION_URL', '')
 netlify_url = os.getenv('URL', '')  # Netlify sets this automatically
+vite_api_base = os.getenv('VITE_API_BASE_URL', '')
 
 allowed_frontend_origins = [u.strip() for u in os.getenv('FRONTEND_ORIGINS', 'http://localhost:5173,http://localhost:3000,http://127.0.0.1:5174,http://127.0.0.1:3000,http://localhost:5174/').split(',') if u.strip()]
 
@@ -1007,6 +1014,329 @@ def api_privacy_policy():
             'message': 'Error retrieving privacy policy'
         }), 500
 
+# ===================================
+# BLOG ROUTES
+# ===================================
+
+def slugify(text):
+    """Convert text to URL-friendly slug"""
+    import re
+    text = text.lower().strip()
+    text = re.sub(r'[^\w\s-]', '', text)
+    text = re.sub(r'[-\s]+', '-', text)
+    return text
+
+# Get all blogs (public + admin)
+@app.route('/api/blogs', methods=['GET'])
+def get_blogs():
+    try:
+        page = request.args.get('page', 1, type=int)
+        per_page = request.args.get('per_page', 10, type=int)
+        status = request.args.get('status', 'published')
+        topic_id = request.args.get('topic_id', None)
+        search = request.args.get('search', '')
+        
+        query = Blog.query
+        
+        # Filter by status (only published for public, all for admin)
+        if status:
+            query = query.filter_by(status=status)
+        
+        # Filter by topic
+        if topic_id:
+            query = query.filter_by(topic_id=topic_id)
+        
+        # Search in title and content
+        if search:
+            query = query.filter(
+                db.or_(
+                    Blog.title.ilike(f'%{search}%'),
+                    Blog.content.ilike(f'%{search}%')
+                )
+            )
+        
+        # Order by publish date
+        query = query.order_by(Blog.published_at.desc())
+        
+        # Paginate
+        paginated = query.paginate(page=page, per_page=per_page, error_out=False)
+        
+        blogs = [{
+            'id': blog.id,
+            'title': blog.title,
+            'slug': blog.slug,
+            'excerpt': blog.excerpt,
+            'featured_image': blog.featured_image,
+            'author': blog.author,
+            'status': blog.status,
+            'views': blog.views,
+            'topic_id': blog.topic_id,
+            'topic_name': blog.topic_id,
+            'subtopic_id': blog.subtopic_id,
+            'subtopic_name': blog.subtopic_id,
+            'created_at': blog.created_at.isoformat() if blog.created_at else None,
+            'published_at': blog.published_at.isoformat() if blog.published_at else None
+        } for blog in paginated.items]
+        
+        return jsonify({
+            'success': True,
+            'blogs': blogs,
+            'total': paginated.total,
+            'pages': paginated.pages,
+            'current_page': page
+        })
+    except Exception as e:
+        print(f"Error fetching blogs: {e}")
+        import traceback; traceback.print_exc()
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+# Get single blog by slug
+@app.route('/api/blogs/<slug>', methods=['GET'])
+def get_blog(slug):
+    try:
+        blog = Blog.query.filter_by(slug=slug).first()
+        if not blog:
+            return jsonify({'success': False, 'message': 'Blog not found'}), 404
+        
+        # Increment view count
+        blog.views += 1
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'blog': {
+                'id': blog.id,
+                'title': blog.title,
+                'slug': blog.slug,
+                'content': blog.content,
+                'excerpt': blog.excerpt,
+                'featured_image': blog.featured_image,
+                'author': blog.author,
+                'status': blog.status,
+                'views': blog.views,
+                'topic_id': blog.topic_id,
+                'topic_name': blog.topic_id,
+                'subtopic_id': blog.subtopic_id,
+                'subtopic_name': blog.subtopic_id,
+                'meta_description': blog.meta_description,
+                'meta_keywords': blog.meta_keywords,
+                'created_at': blog.created_at.isoformat() if blog.created_at else None,
+                'updated_at': blog.updated_at.isoformat() if blog.updated_at else None,
+                'published_at': blog.published_at.isoformat() if blog.published_at else None
+            }
+        })
+    except Exception as e:
+        print(f"Error fetching blog: {e}")
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+# Create blog (Admin only)
+@app.route('/api/blogs', methods=['POST'])
+@login_required
+def create_blog():
+    try:
+        data = request.json
+        print(f"Received blog data: {data}")
+        
+        # Generate slug from title
+        slug = slugify(data['title'])
+        
+        # Check if slug exists
+        existing = Blog.query.filter_by(slug=slug).first()
+        if existing:
+            slug = f"{slug}-{str(uuid.uuid4())[:8]}"
+        
+        # Handle topic as text input - can be None/empty
+        topic_id = data.get('topic_id') if data.get('topic_id') else None
+        subtopic_id = data.get('subtopic_id') if data.get('subtopic_id') else None
+        
+        blog = Blog(
+            title=data['title'],
+            slug=slug,
+            content=data['content'],
+            excerpt=data.get('excerpt', ''),
+            featured_image=data.get('featured_image', ''),
+            topic_id=topic_id,
+            subtopic_id=subtopic_id,
+            author=data.get('author', 'Admin'),
+            status=data.get('status', 'draft'),
+            meta_description=data.get('meta_description', ''),
+            meta_keywords=data.get('meta_keywords', '')
+        )
+        
+        # Set published_at if status is published
+        if blog.status == 'published' and not blog.published_at:
+            blog.published_at = datetime.now()
+        
+        db.session.add(blog)
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Blog created successfully',
+            'blog': {
+                'id': blog.id,
+                'title': blog.title,
+                'slug': blog.slug,
+                'status': blog.status
+            }
+        })
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error creating blog: {e}")
+        import traceback; traceback.print_exc()
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+# Update blog (Admin only)
+@app.route('/api/blogs/<blog_id>', methods=['PUT'])
+@login_required
+def update_blog(blog_id):
+    try:
+        blog = Blog.query.get(blog_id)
+        if not blog:
+            return jsonify({'success': False, 'message': 'Blog not found'}), 404
+        
+        data = request.json
+        
+        # Update fields
+        if 'title' in data:
+            blog.title = data['title']
+            blog.slug = slugify(data['title'])
+        if 'content' in data:
+            blog.content = data['content']
+        if 'excerpt' in data:
+            blog.excerpt = data['excerpt']
+        if 'featured_image' in data:
+            blog.featured_image = data['featured_image']
+        if 'topic_id' in data:
+            blog.topic_id = data['topic_id']
+        if 'subtopic_id' in data:
+            blog.subtopic_id = data['subtopic_id']
+        if 'author' in data:
+            blog.author = data['author']
+        if 'meta_description' in data:
+            blog.meta_description = data['meta_description']
+        if 'meta_keywords' in data:
+            blog.meta_keywords = data['meta_keywords']
+        
+        # Handle status change
+        if 'status' in data:
+            old_status = blog.status
+            blog.status = data['status']
+            if blog.status == 'published' and old_status != 'published':
+                blog.published_at = datetime.now()
+        
+        blog.updated_at = datetime.now()
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Blog updated successfully'
+        })
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error updating blog: {e}")
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+# Delete blog (Admin only)
+@app.route('/api/blogs/<blog_id>', methods=['DELETE'])
+@login_required
+def delete_blog(blog_id):
+    try:
+        blog = Blog.query.get(blog_id)
+        if not blog:
+            return jsonify({'success': False, 'message': 'Blog not found'}), 404
+        
+        db.session.delete(blog)
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Blog deleted successfully'
+        })
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error deleting blog: {e}")
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+# Get all topics
+@app.route('/api/topics', methods=['GET'])
+def get_topics():
+    try:
+        topics = Topic.query.order_by(Topic.display_order, Topic.name).all()
+        return jsonify({
+            'success': True,
+            'topics': [{
+                'id': t.id,
+                'name': t.name,
+                'slug': t.slug,
+                'description': t.description,
+                'icon': t.icon,
+                'subtopics': [{
+                    'id': st.id,
+                    'name': st.name,
+                    'slug': st.slug,
+                    'description': st.description
+                } for st in t.subtopics]
+            } for t in topics]
+        })
+    except Exception as e:
+        print(f"Error fetching topics: {e}")
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+# Create topic (Admin only)
+@app.route('/api/topics', methods=['POST'])
+@login_required
+def create_topic():
+    try:
+        data = request.json
+        topic = Topic(
+            name=data['name'],
+            slug=slugify(data['name']),
+            description=data.get('description', ''),
+            icon=data.get('icon', '')
+        )
+        db.session.add(topic)
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Topic created successfully',
+            'topic': {'id': topic.id, 'name': topic.name, 'slug': topic.slug}
+        })
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error creating topic: {e}")
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+# Create subtopic (Admin only)
+@app.route('/api/topics/<topic_id>/subtopics', methods=['POST'])
+@login_required
+def create_subtopic(topic_id):
+    try:
+        data = request.json
+        subtopic = SubTopic(
+            name=data['name'],
+            slug=slugify(data['name']),
+            topic_id=topic_id,
+            description=data.get('description', '')
+        )
+        db.session.add(subtopic)
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'message': 'Subtopic created successfully',
+            'subtopic': {'id': subtopic.id, 'name': subtopic.name, 'slug': subtopic.slug}
+        })
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error creating subtopic: {e}")
+        return jsonify({'success': False, 'message': str(e)}), 500
+
 if __name__ == '__main__':
+    with app.app_context():
+        db.create_all()  # Create blog tables
+        print("Blog database tables created successfully!")
     # use_reloader=False is used to prevent [WinError 10038] on Windows
     app.run(debug=True, host='0.0.0.0', port=5000, use_reloader=False)
+

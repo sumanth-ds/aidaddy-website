@@ -167,6 +167,52 @@ export const apiService = {
     downloadMeetings: () => {
         window.open(`${API_BASE_URL}${API_ENDPOINTS.DOWNLOAD_MEETINGS}`, '_blank');
     },
+
+    // Blog APIs
+    getBlogs: async (page = 1, status = 'published', topicId = null, search = '') => {
+        const params = new URLSearchParams();
+        params.append('page', page);
+        if (status && status !== 'all') params.append('status', status);
+        if (topicId) params.append('topic_id', topicId);
+        if (search) params.append('search', search);
+        const response = await publicApi.get(`/api/blogs?${params.toString()}`);
+        return response.data;
+    },
+
+    getBlog: async (slug) => {
+        const response = await publicApi.get(`/api/blogs/${slug}`);
+        return response.data;
+    },
+
+    createBlog: async (blogData) => {
+        const response = await api.post('/api/blogs', blogData);
+        return response.data;
+    },
+
+    updateBlog: async (id, blogData) => {
+        const response = await api.put(`/api/blogs/${id}`, blogData);
+        return response.data;
+    },
+
+    deleteBlog: async (id) => {
+        const response = await api.delete(`/api/blogs/${id}`);
+        return response.data;
+    },
+
+    getTopics: async () => {
+        const response = await publicApi.get('/api/topics');
+        return response.data;
+    },
+
+    createTopic: async (topicData) => {
+        const response = await api.post('/api/topics', topicData);
+        return response.data;
+    },
+
+    createSubtopic: async (topicId, subtopicData) => {
+        const response = await api.post(`/api/topics/${topicId}/subtopics`, subtopicData);
+        return response.data;
+    },
 };
 
 export default api;

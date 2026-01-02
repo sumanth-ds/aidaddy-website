@@ -41,6 +41,7 @@ const Header = () => {
                         <li><a href="#home" onClick={() => scrollToSection('home')}>Home</a></li>
                         <li><a href="#services" onClick={() => scrollToSection('services')}>Services</a></li>
                         <li><a href="#features" onClick={() => scrollToSection('features')}>Features</a></li>
+                        <li><Link to="/blog" onClick={() => setIsMenuOpen(false)}>Blog</Link></li>
                         <li><a href="#contact" onClick={() => scrollToSection('contact')}>Contact</a></li>
                         <li><Link to="/get-started" className={styles.ctaButton}>Get Started</Link></li>
                     </ul>

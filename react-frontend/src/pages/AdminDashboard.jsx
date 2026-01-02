@@ -10,19 +10,27 @@ const AdminDashboard = () => {
     const [activeTab, setActiveTab] = useState('contacts');
     const [contacts, setContacts] = useState([]);
     const [meetings, setMeetings] = useState([]);
+    const [blogs, setBlogs] = useState([]);
+    const [topics, setTopics] = useState([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState('');
     const [contactsPage, setContactsPage] = useState(1);
     const [meetingsPage, setMeetingsPage] = useState(1);
+    const [blogsPage, setBlogsPage] = useState(1);
     const [modal, setModal] = useState({ isOpen: false, type: 'info', title: '', message: '' });
     const [linkModal, setLinkModal] = useState({ isOpen: false, meetingId: null, link: '' });
     const [rescheduleModal, setRescheduleModal] = useState({ isOpen: false, meetingId: null, newDatetime: '', error: '' });
     const [authModal, setAuthModal] = useState({ isOpen: false, username: '', password: '', error: '' });
+    const [blogModal, setBlogModal] = useState({ isOpen: false, blog: null, mode: 'create' });
     const navigate = useNavigate();
 
     useEffect(() => {
         fetchData();
-    }, [contactsPage, meetingsPage, search]);
+        if (activeTab === 'blogs') {
+            fetchBlogs();
+            fetchTopics();
+        }
+    }, [contactsPage, meetingsPage, blogsPage, search, activeTab]);
 
     const fetchData = async () => {
         try {
@@ -48,6 +56,28 @@ const AdminDashboard = () => {
     useEffect(() => {
         console.log('meetings state updated', meetings.length);
     }, [meetings]);
+
+    const fetchBlogs = async () => {
+        try {
+            const response = await apiService.getBlogs(blogsPage, 'all');
+            if (response && response.success) {
+                setBlogs(response.blogs || []);
+            }
+        } catch (error) {
+            console.error('Failed to fetch blogs:', error);
+        }
+    };
+
+    const fetchTopics = async () => {
+        try {
+            const response = await apiService.getTopics();
+            if (response && response.success) {
+                setTopics(response.topics || []);
+            }
+        } catch (error) {
+            console.error('Failed to fetch topics:', error);
+        }
+    };
 
     const parseAdminDataFromJson = (data) => {
         try {
@@ -225,6 +255,74 @@ const AdminDashboard = () => {
         }
     };
 
+    const handleCreateBlog = () => {
+        setBlogModal({
+            isOpen: true, blog: {
+                title: '',
+                content: '',
+                excerpt: '',
+                featured_image: '',
+                topic_id: '',
+                subtopic_id: '',
+                status: 'draft',
+                meta_description: '',
+                meta_keywords: ''
+            }, mode: 'create'
+        });
+    };
+
+    const handleEditBlog = (blog) => {
+        setBlogModal({ isOpen: true, blog, mode: 'edit' });
+    };
+
+    const handleSaveBlog = async () => {
+        try {
+            const blog = blogModal.blog;
+            if (!blog.title || !blog.content) {
+                setModal({ isOpen: true, type: 'error', title: 'Validation Error', message: 'Title and content are required fields.' });
+                return;
+            }
+
+            if (blogModal.mode === 'create') {
+                const response = await apiService.createBlog(blog);
+                setModal({ isOpen: true, type: 'success', title: 'Success', message: 'Blog created successfully!' });
+            } else {
+                const response = await apiService.updateBlog(blog.id, blog);
+                setModal({ isOpen: true, type: 'success', title: 'Success', message: 'Blog updated successfully!' });
+            }
+
+            setBlogModal({ isOpen: false, blog: null, mode: 'create' });
+            fetchBlogs();
+        } catch (error) {
+            console.error('Error saving blog:', error);
+            const errorMessage = error?.response?.data?.message || error?.message || 'Failed to save blog. Please try again.';
+            setModal({ isOpen: true, type: 'error', title: 'Error', message: errorMessage });
+        }
+    };
+
+    const handleDeleteBlog = async (id) => {
+        if (!window.confirm('Are you sure you want to delete this blog?')) return;
+
+        try {
+            await apiService.deleteBlog(id);
+            setModal({ isOpen: true, type: 'success', title: 'Success', message: 'Blog deleted successfully!' });
+            fetchBlogs();
+        } catch (error) {
+            setModal({ isOpen: true, type: 'error', title: 'Error', message: 'Failed to delete blog.' });
+        }
+    };
+
+    const handlePublishBlog = async (id, currentStatus) => {
+        try {
+            const newStatus = currentStatus === 'published' ? 'draft' : 'published';
+            await apiService.updateBlog(id, { status: newStatus });
+            setModal({ isOpen: true, type: 'success', title: 'Success', message: `Blog ${newStatus} successfully!` });
+            fetchBlogs();
+        } catch (error) {
+            setModal({ isOpen: true, type: 'error', title: 'Error', message: 'Failed to update blog status.' });
+        }
+    };
+
     if (loading) {
         return <Loader fullPage message="Loading dashboard..." />;
     }
@@ -249,6 +347,12 @@ const AdminDashboard = () => {
                         onClick={() => setActiveTab('meetings')}
                     >
                         <i className="fas fa-calendar-alt"></i> Meetings
+                    </div>
+                    <div
+                        className={`${styles.navTab} ${activeTab === 'blogs' ? styles.active : ''}`}
+                        onClick={() => setActiveTab('blogs')}
+                    >
+                        <i className="fas fa-blog"></i> Blogs
                     </div>
                 </div>
 
@@ -439,6 +543,77 @@ const AdminDashboard = () => {
                             </div>
                         </div>
                     )}
+
+                    {activeTab === 'blogs' && (
+                        <div>
+                            <div className={styles.sectionHeader}>
+                                <h2>Blog Management</h2>
+                                <div>
+                                    <button
+                                        className={styles.btnPrimary}
+                                        onClick={handleCreateBlog}
+                                    >
+                                        <i className="fas fa-plus"></i> Create Blog
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div className={styles.tableContainer}>
+                                <table>
+                                    <thead>
+                                        <tr>
+                                            <th>Title</th>
+                                            <th>Topic</th>
+                                            <th>Status</th>
+                                            <th>Views</th>
+                                            <th>Date</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {blogs.length === 0 ? (
+                                            <tr><td colSpan="6" style={{ textAlign: 'center' }}>No blogs found</td></tr>
+                                        ) : blogs.map((blog, index) => (
+                                            <tr key={blog.id} className={styles.tableRow} style={{ animationDelay: `${index * 50}ms` }}>
+                                                <td>{blog.title}</td>
+                                                <td>{blog.topic_name || 'N/A'}</td>
+                                                <td>
+                                                    <span className={`${styles.badge} ${blog.status === 'published' ? styles.badgeSuccess : styles.badgeDraft}`}>
+                                                        {blog.status}
+                                                    </span>
+                                                </td>
+                                                <td>{blog.views || 0}</td>
+                                                <td>{blog.created_at ? new Date(blog.created_at).toLocaleDateString() : 'N/A'}</td>
+                                                <td>
+                                                    <div className={styles.actions}>
+                                                        <button
+                                                            className={`${styles.btn} ${styles.btnPrimary} ${styles.btnSm}`}
+                                                            onClick={() => handleEditBlog(blog)}
+                                                        >
+                                                            <i className="fas fa-edit"></i> Edit
+                                                        </button>
+                                                        <button
+                                                            className={`${styles.btn} ${styles.btnSuccess} ${styles.btnSm}`}
+                                                            onClick={() => handlePublishBlog(blog.id, blog.status)}
+                                                        >
+                                                            <i className="fas fa-{blog.status === 'published' ? 'eye-slash' : 'eye'}"></i>
+                                                            {blog.status === 'published' ? 'Unpublish' : 'Publish'}
+                                                        </button>
+                                                        <button
+                                                            className={`${styles.btn} ${styles.btnDanger} ${styles.btnSm}`}
+                                                            onClick={() => handleDeleteBlog(blog.id)}
+                                                        >
+                                                            <i className="fas fa-trash"></i> Delete
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 <div className={styles.logout}>
@@ -535,6 +710,182 @@ const AdminDashboard = () => {
                         <div className={styles.modalFooter}>
                             <button className={styles.btnModal} onClick={handleRescheduleSubmit}>Submit</button>
                             <button className={`${styles.btnModal} ${styles.btnOutline}`} onClick={() => setRescheduleModal({ isOpen: false, meetingId: null, newDatetime: '', error: '' })}>Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {blogModal.isOpen && (
+                <div className={styles.modal} onClick={() => setBlogModal({ isOpen: false, blog: null, mode: 'create' })}>
+                    <div className={styles.blogModalContent} onClick={(e) => e.stopPropagation()}>
+                        <div className={styles.blogModalHeader}>
+                            <div className={styles.blogModalTitle}>
+                                <i className={`fas fa-${blogModal.mode === 'create' ? 'plus-circle' : 'edit'}`}></i>
+                                <h3>{blogModal.mode === 'create' ? 'Create New Blog Post' : 'Edit Blog Post'}</h3>
+                            </div>
+                            <button
+                                className={styles.closeModalBtn}
+                                onClick={() => setBlogModal({ isOpen: false, blog: null, mode: 'create' })}
+                            >
+                                <i className="fas fa-times"></i>
+                            </button>
+                        </div>
+
+                        <div className={styles.blogModalBody}>
+                            {/* Basic Info Section */}
+                            <div className={styles.formSection}>
+                                <div className={styles.sectionTitle}>
+                                    <i className="fas fa-file-alt"></i>
+                                    <h4>Basic Information</h4>
+                                </div>
+
+                                <div className={styles.formGroup}>
+                                    <label><i className="fas fa-heading"></i> Title <span className={styles.required}>*</span></label>
+                                    <input
+                                        type="text"
+                                        className={styles.formInput}
+                                        value={blogModal.blog?.title || ''}
+                                        onChange={(e) => setBlogModal({ ...blogModal, blog: { ...blogModal.blog, title: e.target.value } })}
+                                        placeholder="Enter an engaging blog title..."
+                                    />
+                                </div>
+
+                                <div className={styles.formGroup}>
+                                    <label><i className="fas fa-align-left"></i> Excerpt</label>
+                                    <textarea
+                                        className={styles.formTextarea}
+                                        value={blogModal.blog?.excerpt || ''}
+                                        onChange={(e) => setBlogModal({ ...blogModal, blog: { ...blogModal.blog, excerpt: e.target.value } })}
+                                        placeholder="Write a brief summary that will appear in blog previews..."
+                                        rows="3"
+                                        maxLength="500"
+                                    />
+                                    <small className={styles.charCount}>
+                                        {(blogModal.blog?.excerpt || '').length}/500 characters
+                                    </small>
+                                </div>
+
+                                <div className={styles.formGroup}>
+                                    <label><i className="fas fa-paragraph"></i> Content <span className={styles.required}>*</span></label>
+                                    <textarea
+                                        className={`${styles.formTextarea} ${styles.codeEditor}`}
+                                        value={blogModal.blog?.content || ''}
+                                        onChange={(e) => setBlogModal({ ...blogModal, blog: { ...blogModal.blog, content: e.target.value } })}
+                                        placeholder="Write your blog content here. HTML is supported for rich formatting..."
+                                        rows="12"
+                                    />
+                                    <small className={styles.hint}>
+                                        <i className="fas fa-info-circle"></i> You can use HTML tags for formatting
+                                    </small>
+                                </div>
+
+                                <div className={styles.formGroup}>
+                                    <label><i className="fas fa-image"></i> Featured Image URL</label>
+                                    <input
+                                        type="url"
+                                        className={styles.formInput}
+                                        value={blogModal.blog?.featured_image || ''}
+                                        onChange={(e) => setBlogModal({ ...blogModal, blog: { ...blogModal.blog, featured_image: e.target.value } })}
+                                        placeholder="https://example.com/image.jpg"
+                                    />
+                                    {blogModal.blog?.featured_image && (
+                                        <div className={styles.imagePreview}>
+                                            <img src={blogModal.blog.featured_image} alt="Preview" />
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+
+                            {/* Categories Section */}
+                            <div className={styles.formSection}>
+                                <div className={styles.sectionTitle}>
+                                    <i className="fas fa-tags"></i>
+                                    <h4>Categories & Publishing</h4>
+                                </div>
+
+                                <div className={styles.formRow}>
+                                    <div className={styles.formGroup}>
+                                        <label><i className="fas fa-folder"></i> Topic</label>
+                                        <input
+                                            type="text"
+                                            className={styles.formInput}
+                                            value={blogModal.blog?.topic_id || ''}
+                                            onChange={(e) => setBlogModal({ ...blogModal, blog: { ...blogModal.blog, topic_id: e.target.value } })}
+                                            placeholder="e.g., Technology, Health, Business"
+                                        />
+                                    </div>
+
+                                    <div className={styles.formGroup}>
+                                        <label><i className="fas fa-folder-open"></i> Subtopic</label>
+                                        <input
+                                            type="text"
+                                            className={styles.formInput}
+                                            value={blogModal.blog?.subtopic_id || ''}
+                                            onChange={(e) => setBlogModal({ ...blogModal, blog: { ...blogModal.blog, subtopic_id: e.target.value } })}
+                                            placeholder="e.g., AI, Web Development, Marketing"
+                                        />
+                                    </div>
+
+                                    <div className={styles.formGroup}>
+                                        <label><i className="fas fa-toggle-on"></i> Status</label>
+                                        <select
+                                            className={styles.formSelect}
+                                            value={blogModal.blog?.status || 'draft'}
+                                            onChange={(e) => setBlogModal({ ...blogModal, blog: { ...blogModal.blog, status: e.target.value } })}
+                                        >
+                                            <option value="draft">📝 Draft</option>
+                                            <option value="published">✅ Published</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* SEO Section */}
+                            <div className={styles.formSection}>
+                                <div className={styles.sectionTitle}>
+                                    <i className="fas fa-search"></i>
+                                    <h4>SEO Optimization</h4>
+                                </div>
+
+                                <div className={styles.formGroup}>
+                                    <label><i className="fas fa-file-invoice"></i> Meta Description</label>
+                                    <textarea
+                                        className={styles.formTextarea}
+                                        value={blogModal.blog?.meta_description || ''}
+                                        onChange={(e) => setBlogModal({ ...blogModal, blog: { ...blogModal.blog, meta_description: e.target.value } })}
+                                        placeholder="Write a concise description for search engines (recommended: 150-160 chars)..."
+                                        rows="2"
+                                        maxLength="160"
+                                    />
+                                    <small className={styles.charCount}>
+                                        {(blogModal.blog?.meta_description || '').length}/160 characters
+                                    </small>
+                                </div>
+
+                                <div className={styles.formGroup}>
+                                    <label><i className="fas fa-key"></i> Meta Keywords</label>
+                                    <input
+                                        type="text"
+                                        className={styles.formInput}
+                                        value={blogModal.blog?.meta_keywords || ''}
+                                        onChange={(e) => setBlogModal({ ...blogModal, blog: { ...blogModal.blog, meta_keywords: e.target.value } })}
+                                        placeholder="ai, machine learning, technology, tutorial"
+                                    />
+                                    <small className={styles.hint}>
+                                        <i className="fas fa-info-circle"></i> Separate keywords with commas
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className={styles.blogModalFooter}>
+                            <button className={styles.btnCancel} onClick={() => setBlogModal({ isOpen: false, blog: null, mode: 'create' })}>
+                                <i className="fas fa-times"></i> Cancel
+                            </button>
+                            <button className={styles.btnSave} onClick={handleSaveBlog}>
+                                <i className={`fas fa-${blogModal.mode === 'create' ? 'plus' : 'save'}`}></i>
+                                {blogModal.mode === 'create' ? 'Create Blog Post' : 'Update Blog Post'}
+                            </button>
                         </div>
                     </div>
                 </div>

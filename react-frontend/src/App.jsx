@@ -5,6 +5,8 @@ import Booking from './pages/Booking'
 import AdminDashboard from './pages/AdminDashboard'
 import TermsAndConditions from './pages/TermsAndConditions'
 import PrivacyPolicy from './pages/PrivacyPolicy'
+import BlogList from './pages/BlogList'
+import BlogPost from './pages/BlogPost'
 import { isAuthenticated } from './utils/auth'
 
 // Protected Route Component
@@ -24,6 +26,8 @@ function App() {
                 <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
                 <Route path="/privacy" element={<PrivacyPolicy />} />
                 <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                <Route path="/blog" element={<BlogList />} />
+                <Route path="/blog/:slug" element={<BlogPost />} />
                 <Route
                     path="/admin"
                     element={
