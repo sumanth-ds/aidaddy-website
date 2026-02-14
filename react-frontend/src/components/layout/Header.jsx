@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import styles from './Header.module.css';
-import logo from '../../../media/aidaddy_logo.png';
+import logo from '../../../media/Kyvanta innovations Pvt Ltd.png';
 
 const Header = () => {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -29,7 +29,7 @@ const Header = () => {
                 <nav className={styles.navbar}>
                     <Link to="/" className={styles.logo}>
                         <img src={logo} alt="Aidaddy Logo" className={styles.logoImage} />
-                        <span className={styles.logoText}>Aidaddy</span>
+                        <span className={styles.logoText}>Kyvanta Innovations</span>
                     </Link>
 
                     <div className={`${styles.hamburger} ${isMenuOpen ? styles.active : ''}`} onClick={toggleMenu}>

@@ -1,6 +1,22 @@
 .contactSection {
     padding: 100px 0;
-    background-color: #f8fafc;
+    background: linear-gradient(135deg, rgba(248, 250, 252, 0.98) 0%, rgba(240, 249, 255, 0.98) 100%),
+        url('/media/backgorund.png') center center no-repeat;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+.contactSection::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(ellipse at 20% 70%, rgba(102, 126, 234, 0.05) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 30%, rgba(118, 75, 162, 0.04) 0%, transparent 40%);
+    pointer-events: none;
 }
 
 .container {
@@ -31,15 +47,19 @@
 .contactWrapper {
     display: flex;
     gap: 50px;
-    background: white;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
     border-radius: 20px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08),
+        0 8px 20px rgba(0, 0, 0, 0.04);
     overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.6);
 }
 
 .contactInfo {
     flex: 1;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #0ea5e9 0%, #8b5cf6 100%);
     padding: 50px;
     color: white;
     display: flex;
@@ -70,20 +90,23 @@
     gap: 15px;
 }
 
-.icon {
-    width: 50px;
-    height: 50px;
-    background: rgba(255, 255, 255, 0.2);
-    border-radius: 50%;
+.item>div {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 20px;
+    flex-direction: column;
+}
+
+.infoLabel {
+    font-size: 0.85rem;
+    opacity: 0.7;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
 }
 
 .item p {
     font-size: 1.1rem;
     font-weight: 500;
+    margin: 0;
 }
 
 .socialLinks {
@@ -106,12 +129,21 @@
 
 .socialIcon:hover {
     background: white;
-    color: #667eea;
+    color: #0ea5e9;
 }
 
 .contactForm {
     flex: 1.5;
     padding: 50px;
+}
+
+.formRow {
+    display: flex;
+    gap: 20px;
+}
+
+.formRow .formGroup {
+    flex: 1;
 }
 
 .formGroup {
@@ -137,10 +169,23 @@
 }
 
 .formGroup input:focus,
-.formGroup textarea:focus {
+.formGroup textarea:focus,
+.formGroup select:focus {
     outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    border-color: #0ea5e9;
+    box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.1);
+}
+
+.selectInput {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    font-family: inherit;
+    background: white;
+    cursor: pointer;
 }
 
 .formGroup textarea {
@@ -171,7 +216,7 @@
 .submitBtn {
     width: 100%;
     padding: 15px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #0ea5e9 0%, #8b5cf6 100%);
     color: white;
     border: none;
     border-radius: 8px;
@@ -213,5 +258,10 @@
     .contactInfo,
     .contactForm {
         padding: 30px 20px;
+    }
+
+    .formRow {
+        flex-direction: column;
+        gap: 0;
     }
 }

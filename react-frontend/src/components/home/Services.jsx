@@ -4,74 +4,110 @@ import styles from './Services.module.css';
 const servicesData = [
     {
         icon: 'fa-lightbulb',
-        title: 'AI Solutions Development',
-        description: 'Smart systems that work for you 24/7, automating tasks and making intelligent decisions for your business.',
-        details: 'Imagine having a digital assistant that never sleeps - one that handles repetitive work, makes smart recommendations, and helps your team focus on what matters. We build custom systems that understand your business processes and work seamlessly with your existing tools.',
+        title: 'AI Innovation Solutions',
+        description: 'We design and develop innovative AI-driven technologies that transform business operations, improve decision-making, and create competitive advantages.',
+        details: 'Our innovation solutions focus on cutting-edge AI technologies that help businesses stay ahead of the competition. We work closely with your team to identify opportunities for AI-driven transformation and deliver custom solutions that address your unique business challenges.',
         examples: [
-            'Auto-respond to customer emails based on context',
-            'Smart document processing that extracts and organizes information',
-            'Automated report generation from your business data',
-            'Intelligent routing of customer requests to the right team'
+            'AI-powered automation systems for workflow optimization',
+            'Intelligent data analytics platforms for better insights',
+            'Predictive modeling and forecasting tools',
+            'Industry-specific AI applications'
         ]
     },
     {
-        icon: 'fa-chart-line',
-        title: 'Machine Learning Engineering',
-        description: 'Systems that learn from your data to predict trends, spot patterns, and make recommendations - like having a crystal ball for your business.',
-        details: 'Think of it as teaching computers to recognize patterns the way humans do - but faster and more consistently. These systems analyze your historical data to predict future outcomes, helping you make proactive decisions instead of reactive ones.',
+        icon: 'fa-rocket',
+        title: 'AI Software Solutions',
+        description: 'We build scalable, secure, and high-performance AI software tailored to business needs.',
+        details: 'From concept to deployment, we create robust AI-powered software solutions that scale with your business. Our team combines deep technical expertise with industry knowledge to deliver products that drive real business value.',
         examples: [
-            'Predict which customers are likely to buy next month',
-            'Forecast inventory needs before you run out',
-            'Recommend products customers will love',
-            'Detect unusual patterns that might indicate problems'
+            'Machine Learning applications for business processes',
+            'Natural Language Processing (NLP) systems',
+            'Computer Vision solutions for visual analysis',
+            'AI-powered SaaS platforms'
+        ]
+    },
+    {
+        icon: 'fa-cogs',
+        title: 'AI Software Services',
+        description: 'We provide end-to-end AI services to help organizations adopt and scale artificial intelligence.',
+        details: 'Our comprehensive AI services cover the entire lifecycle of AI adoption - from initial strategy and consulting to deployment, integration, and ongoing optimization. We ensure your AI initiatives deliver measurable business outcomes.',
+        examples: [
+            'AI consulting and strategy development',
+            'Data engineering and preparation',
+            'AI model training and deployment',
+            'Maintenance and optimization services'
+        ]
+    },
+    {
+        icon: 'fa-brain',
+        title: 'Custom AI Model Development',
+        description: 'We develop custom AI models tailored to your specific business requirements and data.',
+        details: 'Every business is unique, and so should be your AI solutions. Our team builds custom machine learning models trained on your specific data to solve your most challenging problems.',
+        examples: [
+            'Custom model architecture design',
+            'Domain-specific training data curation',
+            'Model fine-tuning and optimization',
+            'Continuous learning and improvement'
         ]
     },
     {
         icon: 'fa-comments',
-        title: 'Natural Language Processing',
-        description: 'Systems that understand and respond to human language - making your business accessible through conversation.',
-        details: 'Enable your business to communicate naturally with customers through chat, email, or voice. These systems understand context, sentiment, and intent - just like a well-trained customer service representative would.',
+        title: 'AI Chatbots & Virtual Assistants',
+        description: 'Intelligent conversational AI that enhances customer experience and automates support.',
+        details: 'Transform your customer service with AI-powered chatbots and virtual assistants that understand context, intent, and can handle complex conversations. Available 24/7 to support your customers.',
         examples: [
-            'Chatbots that answer customer questions instantly',
-            'Analyze customer reviews to understand satisfaction',
-            'Extract key information from contracts and invoices',
-            'Automatically categorize support tickets'
+            'Customer support automation',
+            'Lead qualification and nurturing',
+            'Internal knowledge assistants',
+            'Multi-language support'
         ]
     },
     {
-        icon: 'fa-magic',
-        title: 'Generative AI Solutions',
-        description: 'AI that creates content for you - from writing product descriptions to summarizing lengthy reports.',
-        details: 'Like having a creative assistant that can write, summarize, and translate at scale. Perfect for businesses that need to produce consistent, high-quality content quickly or process large volumes of text.',
+        icon: 'fa-chart-line',
+        title: 'Enterprise AI Integration',
+        description: 'Seamless integration of AI capabilities into your existing enterprise systems.',
+        details: 'We help you leverage AI across your entire organization by integrating intelligent capabilities into your existing systems, workflows, and processes. Connect AI with your CRM, ERP, and other enterprise tools.',
         examples: [
-            'Generate product descriptions for your catalog',
-            'Summarize long documents into key points',
-            'Create personalized email campaigns',
-            'Build knowledge bases from existing documents'
-        ]
-    },
-    {
-        icon: 'fa-chart-bar',
-        title: 'AI for Business Analytics',
-        description: 'Turn your data into clear insights and predictions - see what\'s happening now and what\'s coming next.',
-        details: 'Stop drowning in spreadsheets. Get clear, visual dashboards that show you what matters most. Our systems monitor your key metrics, alert you to issues, and help you understand the "why" behind the numbers.',
-        examples: [
-            'Real-time dashboards showing business health',
-            'Predict sales trends for better planning',
-            'Identify which marketing campaigns work best',
-            'Spot opportunities for cost savings'
+            'Legacy system modernization',
+            'API-based AI services integration',
+            'Cloud-based AI implementation',
+            'AI performance monitoring'
         ]
     },
     {
         icon: 'fa-eye',
-        title: 'Deep Learning Projects',
-        description: 'Advanced visual recognition and complex problem-solving - teaching computers to see and understand like humans do.',
-        details: 'Perfect for businesses that work with images, videos, or complex visual data. These systems can identify, classify, and analyze visual content at scale - doing in seconds what would take humans hours.',
+        title: 'Computer Vision Solutions',
+        description: 'Advanced visual AI that enables machines to interpret and understand images and videos.',
+        details: 'From object detection to facial recognition, our computer vision solutions help businesses automate visual tasks, improve safety, and extract valuable insights from images and video data.',
         examples: [
-            'Automatically sort and categorize product images',
-            'Detect defects in manufacturing',
-            'Recognize faces for security or attendance',
-            'Extract text from photos and scanned documents'
+            'Object detection and classification',
+            'Facial recognition systems',
+            'Quality control in manufacturing',
+            'Video analytics and monitoring'
+        ]
+    },
+    {
+        icon: 'fa-chart-pie',
+        title: 'Predictive Analytics',
+        description: 'Turn your historical data into accurate predictions and actionable business insights.',
+        details: 'Our predictive analytics solutions help you forecast trends, anticipate customer behavior, and make data-driven decisions. Stay ahead of the curve with accurate predictions powered by advanced ML algorithms.',
+        examples: [
+            'Sales forecasting',
+            'Customer churn prediction',
+            'Demand planning and inventory optimization',
+            'Risk assessment modeling'
+        ]
+    },
+    {
+        icon: 'fa-language',
+        title: 'Natural Language Processing',
+        description: 'Advanced NLP solutions that enable machines to understand, interpret, and generate human language.',
+        details: 'Unlock the power of text data with our NLP solutions. From sentiment analysis to text generation, we help you extract insights and automate language-based processes.',
+        examples: [
+            'Sentiment analysis',
+            'Text classification and categorization',
+            'Document summarization',
+            'Language translation services'
         ]
     }
 ];

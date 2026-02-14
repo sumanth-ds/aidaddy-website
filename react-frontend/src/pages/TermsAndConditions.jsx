@@ -16,7 +16,7 @@ function TermsAndConditions() {
 
                     <div className={styles.intro}>
                         <p>
-                            Welcome to Aidaddy! These Terms and Conditions ("Terms") govern your access to and use of the Aidaddy website,
+                            Welcome to Kyvanta Innovations! These Terms and Conditions ("Terms") govern your access to and use of the Kyvanta Innovations website,
                             services, and AI-powered solutions (collectively, the "Services"). By accessing or using our Services, you agree
                             to be bound by these Terms.
                         </p>
@@ -25,7 +25,7 @@ function TermsAndConditions() {
                     <section className={styles.section}>
                         <h2>1. Acceptance of Terms</h2>
                         <p>
-                            By accessing, browsing, or using the Aidaddy platform, you acknowledge that you have read, understood, and agree
+                            By accessing, browsing, or using the Kyvanta Innovations platform, you acknowledge that you have read, understood, and agree
                             to be bound by these Terms and our Privacy Policy. If you do not agree to these Terms, please do not use our Services.
                         </p>
                     </section>
@@ -33,7 +33,7 @@ function TermsAndConditions() {
                     <section className={styles.section}>
                         <h2>2. Description of Services</h2>
                         <p>
-                            Aidaddy provides AI-powered business solutions, consulting services, and technology implementation support.
+                            Kyvanta Innovations provides AI-powered business solutions, consulting services, and technology implementation support.
                             Our Services include but are not limited to:
                         </p>
                         <ul>
@@ -79,7 +79,7 @@ function TermsAndConditions() {
                         <p>You agree to use our Services only for lawful purposes and in accordance with these Terms. You may not:</p>
                         <ul>
                             <li>Use the Services in any way that violates applicable laws or regulations</li>
-                            <li>Impersonate or attempt to impersonate Aidaddy or any other person or entity</li>
+                            <li>Impersonate or attempt to impersonate Kyvanta Innovations or any other person or entity</li>
                             <li>Engage in any conduct that restricts or inhibits anyone's use of the Services</li>
                             <li>Introduce viruses, trojans, worms, or other malicious code</li>
                             <li>Attempt to gain unauthorized access to any portion of the Services</li>
@@ -89,7 +89,7 @@ function TermsAndConditions() {
                         <h3>5.2 Intellectual Property</h3>
                         <p>
                             All content, features, and functionality of the Services, including but not limited to text, graphics, logos,
-                            images, software, and AI models, are owned by Aidaddy or its licensors and are protected by copyright, trademark,
+                            images, software, and AI models, are owned by Kyvanta Innovations or its licensors and are protected by copyright, trademark,
                             and other intellectual property laws.
                         </p>
                     </section>
@@ -118,13 +118,13 @@ function TermsAndConditions() {
 
                         <h3>6.1 Eligibility</h3>
                         <p>
-                            Aidaddy offers a free small project trial to qualifying first-time clients. This program is designed to
+                            Kyvanta Innovations offers a free small project trial to qualifying first-time clients. This program is designed to
                             demonstrate our capabilities and allow potential clients to experience our service quality.
                         </p>
                         <ul>
-                            <li>The free trial is available only to new clients who have not previously engaged Aidaddy for paid services</li>
+                            <li>The free trial is available only to new clients who have not previously engaged Kyvanta Innovations for paid services</li>
                             <li>One free trial project per client/organization</li>
-                            <li>Project scope must be approved by Aidaddy and meet our small project criteria</li>
+                            <li>Project scope must be approved by Kyvanta Innovations and meet our small project criteria</li>
                             <li>We reserve the right to decline free trial requests at our discretion</li>
                         </ul>
 
@@ -172,13 +172,13 @@ function TermsAndConditions() {
                         </p>
                         <ul>
                             <li>The client owns all deliverables and source code created specifically for their project</li>
-                            <li>Aidaddy retains ownership of proprietary frameworks, tools, and methodologies used</li>
+                            <li>Kyvanta Innovations retains ownership of proprietary frameworks, tools, and methodologies used</li>
                             <li>Both parties agree not to disclose confidential information without consent</li>
                         </ul>
 
                         <h3>6.7 Program Modifications</h3>
                         <p>
-                            Aidaddy reserves the right to modify, suspend, or terminate the free trial program at any time without
+                            Kyvanta Innovations reserves the right to modify, suspend, or terminate the free trial program at any time without
                             prior notice. Ongoing approved projects will be honored even if the program is discontinued.
                         </p>
                     </section>
@@ -274,7 +274,7 @@ function TermsAndConditions() {
                     <section className={styles.section}>
                         <h2>12. Indemnification</h2>
                         <p>
-                            You agree to indemnify, defend, and hold harmless Aidaddy, its officers, directors, employees, and agents
+                            You agree to indemnify, defend, and hold harmless Kyvanta Innovations, its officers, directors, employees, and agents
                             from any claims, liabilities, damages, losses, and expenses, including reasonable attorneys' fees, arising
                             out of or related to:
                         </p>
@@ -357,7 +357,7 @@ function TermsAndConditions() {
                     <div className={styles.acknowledgment}>
                         <p>
                             <strong>
-                                By using Aidaddy's Services, you acknowledge that you have read, understood, and agree to be bound
+                                By using Kyvanta Innovations's Services, you acknowledge that you have read, understood, and agree to be bound
                                 by these Terms and Conditions.
                             </strong>
                         </p>

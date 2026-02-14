@@ -304,7 +304,7 @@ const Booking = () => {
             <div className={styles.container}>
                 <div className={styles.header}>
                     <Link to="/" className={styles.logo}>
-                        <i className="fas fa-robot"></i> Aidaddy
+                        <i className="fas fa-robot"></i> Kyvanta Innovations
                     </Link>
                     <Link to="/" className={styles.backLink}>
                         <i className="fas fa-arrow-left"></i> Back to Home

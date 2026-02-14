@@ -1,14 +1,34 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import styles from './Hero.module.css';
 
 const Hero = () => {
+  const [displayText, setDisplayText] = useState('');
+  const fullText = 'Transform Your Business with AI';
+
+  useEffect(() => {
+    let index = 0;
+    const interval = setInterval(() => {
+      if (index <= fullText.length) {
+        setDisplayText(fullText.slice(0, index));
+        index++;
+      } else {
+        clearInterval(interval);
+      }
+    }, 100);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <section className={styles.hero} id="home">
       <div className={styles.container}>
         <div className={styles.heroContent}>
           <div className={styles.heroText}>
-            <h1>Transform Your Business with AI</h1>
+            <h1>
+              <span className={styles.typingText}>{displayText}</span>
+              <span className={styles.cursor}>|</span>
+            </h1>
             <p>Unlock the power of artificial intelligence to automate processes, gain insights, and drive growth for your business.</p>
             <div className={styles.heroButtons}>
               <Link to="/get-started" className={styles.ctaButton}>Get Started</Link>
@@ -17,91 +37,167 @@ const Hero = () => {
             </div>
           </div>
           <div className={styles.heroImage}>
-            <div className={styles.animatedPerson}>
-              {/* Animated Person Character */}
-              <div className={styles.person}>
-                <div className={styles.head}>
-                  <div className={styles.face}>
-                    <div className={styles.eyes}>
-                      <div className={styles.eye}></div>
-                      <div className={styles.eye}></div>
+            <div className={styles.robotWrapper}>
+              {/* Main Robot Container */}
+              <div className={styles.realRobot}>
+                {/* Head */}
+                <div className={styles.robotHeadReal}>
+                  {/* Forehead Panel */}
+                  <div className={styles.foreheadPanel}>
+                    <div className={styles.sensorDot}></div>
+                    <div className={styles.sensorLine}></div>
+                  </div>
+
+                  {/* Eyes */}
+                  <div className={styles.eyesContainer}>
+                    <div className={styles.eyeRealLeft}>
+                      <div className={styles.pupil}>
+                        <div className={styles.pupilHighlight}></div>
+                      </div>
+                      <div className={styles.eyeGlow}></div>
                     </div>
-                    <div className={styles.smile}></div>
+                    <div className={styles.eyeRealRight}>
+                      <div className={styles.pupil}>
+                        <div className={styles.pupilHighlight}></div>
+                      </div>
+                      <div className={styles.eyeGlow}></div>
+                    </div>
+                  </div>
+
+                  {/* Nose */}
+                  <div className={styles.noseSensor}>
+                    <div className={styles.noseLight}></div>
+                  </div>
+
+                  {/* Mouth */}
+                  <div className={styles.mouthReal}>
+                    <div className={styles.mouthLine}></div>
+                    <div className={styles.mouthLine}></div>
+                    <div className={styles.mouthLine}></div>
+                  </div>
+
+                  {/* Ear Panels */}
+                  <div className={styles.earPanelLeft}>
+                    <div className={styles.earLight}></div>
+                  </div>
+                  <div className={styles.earPanelRight}>
+                    <div className={styles.earLight}></div>
                   </div>
                 </div>
-                <div className={styles.body}>
-                  <div className={styles.arm} id={styles.leftArm}></div>
-                  <div className={styles.torso}>
-                    <div className={styles.laptopContainer}>
-                      <div className={styles.laptop}>
-                        <div className={styles.screen}>
-                          <div className={styles.codeEditor}>
-                            {/* Code Lines */}
-                            <div className={styles.codeLine} style={{ width: '70%', animationDelay: '0s' }}></div>
-                            <div className={styles.codeLine} style={{ width: '85%', animationDelay: '0.3s' }}></div>
-                            <div className={styles.codeLine} style={{ width: '60%', animationDelay: '0.6s' }}></div>
-                            <div className={styles.codeLine} style={{ width: '75%', animationDelay: '0.9s' }}></div>
-                            {/* Cursor */}
-                            <div className={styles.cursor}></div>
-                          </div>
-                          {/* File Icons */}
-                          <div className={styles.fileIcons}>
-                            <div className={styles.fileIcon}>
-                              <i className="fab fa-python"></i>
-                            </div>
-                            <div className={styles.fileIcon}>
-                              <i className="fab fa-js"></i>
-                            </div>
-                            <div className={styles.fileIcon}>
-                              <i className="fab fa-react"></i>
-                            </div>
-                          </div>
-                        </div>
-                        {/* Progress Indicator */}
-                        <div className={styles.progressBar}>
-                          <div className={styles.progress}></div>
-                        </div>
+
+                {/* Neck */}
+                <div className={styles.robotNeck}>
+                  <div className={styles.neckSegment}></div>
+                  <div className={styles.neckSegment}></div>
+                  <div className={styles.neckSegment}></div>
+                </div>
+
+                {/* Body */}
+                <div className={styles.robotBodyReal}>
+                  {/* Shoulder Left */}
+                  <div className={styles.shoulderLeft}>
+                    <div className={styles.shoulderJoint}></div>
+                    <div className={styles.armReal}>
+                      <div className={styles.armSegment}></div>
+                      <div className={styles.armSegment}></div>
+                      <div className={styles.handReal}>
+                        <div className={styles.finger}></div>
+                        <div className={styles.finger}></div>
+                        <div className={styles.finger}></div>
+                        <div className={styles.fingerThumb}></div>
                       </div>
                     </div>
                   </div>
-                  <div className={styles.arm} id={styles.rightArm}></div>
-                </div>
-                {/* Floating Action Icons */}
-                <div className={`${styles.floatingIcon} ${styles.icon1}`} style={{ top: '10%', left: '5%' }}>
-                  <i className="fas fa-code"></i>
-                  <span className={styles.tooltip}>Coding</span>
-                </div>
-                <div className={`${styles.floatingIcon} ${styles.icon2}`} style={{ top: '20%', right: '10%' }}>
-                  <i className="fas fa-cogs"></i>
-                  <span className={styles.tooltip}>Building</span>
-                </div>
-                <div className={`${styles.floatingIcon} ${styles.icon3}`} style={{ bottom: '15%', left: '8%' }}>
-                  <i className="fas fa-rocket"></i>
-                  <span className={styles.tooltip}>Deploying</span>
-                </div>
-                <div className={`${styles.floatingIcon} ${styles.icon4}`} style={{ bottom: '25%', right: '5%' }}>
-                  <i className="fas fa-check-double"></i>
-                  <span className={styles.tooltip}>Testing</span>
+
+                  {/* Torso */}
+                  <div className={styles.torsoReal}>
+                    {/* Chest Panel */}
+                    <div className={styles.chestPanel}>
+                      <div className={styles.chestScreen}>
+                        <div className={styles.screenLine}></div>
+                        <div className={styles.screenLine}></div>
+                        <div className={styles.screenLine}></div>
+                        <div className={styles.aiText}>AI</div>
+                      </div>
+                      <div className={styles.chestLights}>
+                        <div className={styles.chestLight}></div>
+                        <div className={styles.chestLight}></div>
+                        <div className={styles.chestLight}></div>
+                      </div>
+                    </div>
+
+                    {/* Core */}
+                    <div className={styles.coreUnit}>
+                      <div className={styles.coreRing}></div>
+                      <div className={styles.coreGlow}></div>
+                    </div>
+
+                    {/* Abdomen */}
+                    <div className={styles.abdomenPanel}>
+                      <div className={styles.ventLine}></div>
+                      <div className={styles.ventLine}></div>
+                      <div className={styles.ventLine}></div>
+                    </div>
+                  </div>
+
+                  {/* Shoulder Right */}
+                  <div className={styles.shoulderRight}>
+                    <div className={styles.shoulderJoint}></div>
+                    <div className={styles.armRealRight}>
+                      <div className={styles.armSegment}></div>
+                      <div className={styles.armSegment}></div>
+                      <div className={styles.handReal}>
+                        <div className={styles.finger}></div>
+                        <div className={styles.finger}></div>
+                        <div className={styles.finger}></div>
+                        <div className={styles.fingerThumb}></div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
-                {/* Project Status Indicators */}
-                <div className={styles.projectStatus} style={{ top: '5%', right: '0%' }}>
-                  <i className="fas fa-project-diagram"></i>
-                  <span>Active Projects</span>
-                  <div className={styles.statusDot}></div>
+                {/* Hip */}
+                <div className={styles.robotHip}>
+                  <div className={styles.hipPanel}></div>
                 </div>
 
-                <div className={styles.projectStatus} style={{ bottom: '5%', left: '0%' }}>
-                  <i className="fab fa-github"></i>
-                  <span>Deploying...</span>
-                  <div className={styles.loadingSpinner}></div>
+                {/* Legs */}
+                <div className={styles.legsContainer}>
+                  <div className={styles.legLeft}>
+                    <div className={styles.thigh}>
+                      <div className={styles.kneeJoint}></div>
+                    </div>
+                    <div className={styles.calf}>
+                      <div className={styles.footReal}>
+                        <div className={styles.footPlate}></div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className={styles.legRight}>
+                    <div className={styles.thigh}>
+                      <div className={styles.kneeJoint}></div>
+                    </div>
+                    <div className={styles.calf}>
+                      <div className={styles.footReal}>
+                        <div className={styles.footPlate}></div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-
-                {/* Animated Particles */}
-                <div className={styles.particle} style={{ top: '30%', left: '15%' }}></div>
-                <div className={styles.particle} style={{ top: '60%', right: '20%' }}></div>
-                <div className={styles.particle} style={{ bottom: '40%', left: '25%' }}></div>
               </div>
+
+              {/* Hologram Base */}
+              <div className={styles.hologramBase}>
+                <div className={styles.hologramRing}></div>
+                <div className={styles.hologramRing}></div>
+                <div className={styles.hologramRing}></div>
+              </div>
+
+              {/* Floating Particles */}
+              <div className={styles.particleA}></div>
+              <div className={styles.particleB}></div>
+              <div className={styles.particleC}></div>
+              <div className={styles.particleD}></div>
             </div>
           </div>
         </div>

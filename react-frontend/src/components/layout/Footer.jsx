@@ -8,7 +8,7 @@ const Footer = () => {
             <div className={styles.container}>
                 <div className={styles.footerContent}>
                     <div className={styles.footerColumn}>
-                        <h3>About Aidaddy</h3>
+                        <h3>About Kyvanta Innovations</h3>
                         <p>We provide cutting-edge AI solutions to help businesses automate, optimize, and grow. Our team of experts is dedicated to delivering innovative AI services tailored to your needs.</p>
                         <div className={styles.socialLinks}>
                             <a href="#" aria-label="Facebook"><i className="fab fa-facebook"></i></a>
@@ -42,7 +42,7 @@ const Footer = () => {
                 </div>
 
                 <div className={styles.copyright}>
-                    <p>&copy; 2025-2026 Aidaddy.in. All rights reserved.</p>
+                    <p>&copy; 2025-2026 Kyvanta Innovations. All rights reserved.</p>
                 </div>
             </div>
         </footer>

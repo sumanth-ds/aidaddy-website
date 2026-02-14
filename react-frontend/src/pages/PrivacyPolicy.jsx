@@ -16,7 +16,7 @@ function PrivacyPolicy() {
 
                     <div className={styles.intro}>
                         <p>
-                            At Aidaddy, we are committed to protecting your privacy and ensuring the security of your personal information.
+                            At Kyvanta Innovations, we are committed to protecting your privacy and ensuring the security of your personal information.
                             This Privacy Policy explains how we collect, use, disclose, and safeguard your information when you visit our
                             website and use our services.
                         </p>
@@ -238,7 +238,7 @@ function PrivacyPolicy() {
                     <div className={styles.acknowledgment}>
                         <p>
                             <strong>
-                                By using Aidaddy's services, you acknowledge that you have read and understood this Privacy Policy
+                                By using Kyvanta Innovations's services, you acknowledge that you have read and understood this Privacy Policy
                                 and agree to the collection, use, and disclosure of your information as described herein.
                             </strong>
                         </p>

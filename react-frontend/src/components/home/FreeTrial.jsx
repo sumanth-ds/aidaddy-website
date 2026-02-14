@@ -14,7 +14,7 @@ const FreeTrial = () => {
 
                     <h2>Try Our Services Risk-Free</h2>
                     <p className={styles.subtitle}>
-                        Get a FREE small project to experience the quality of our AI solutions firsthand
+                        Get a FREE small project to experience the quality of our AI solutions firsthand. No commitment, no credit card required.
                     </p>
 
                     <div className={styles.offerBox}>
@@ -50,8 +50,22 @@ const FreeTrial = () => {
                             <div className={styles.feature}>
                                 <i className="fas fa-check-circle"></i>
                                 <div>
+                                    <strong>Dedicated Support:</strong>
+                                    <span>Personal account manager & expert team</span>
+                                </div>
+                            </div>
+                            <div className={styles.feature}>
+                                <i className="fas fa-check-circle"></i>
+                                <div>
                                     <strong>No Credit Card Required:</strong>
                                     <span>Zero risk, just results</span>
+                                </div>
+                            </div>
+                            <div className={styles.feature}>
+                                <i className="fas fa-check-circle"></i>
+                                <div>
+                                    <strong>Full Ownership:</strong>
+                                    <span>You own all deliverables & source code</span>
                                 </div>
                             </div>
                         </div>
@@ -61,19 +75,57 @@ const FreeTrial = () => {
                             <div className={styles.examples}>
                                 <div className={styles.example}>
                                     <i className="fas fa-robot"></i>
-                                    <span>Simple chatbot integration</span>
+                                    <span>AI Chatbot Development</span>
                                 </div>
                                 <div className={styles.example}>
                                     <i className="fas fa-database"></i>
-                                    <span>Data analysis dashboard</span>
+                                    <span>Data Analysis Dashboard</span>
                                 </div>
                                 <div className={styles.example}>
-                                    <i className="fas fa-chart-pie"></i>
-                                    <span>Basic ML model implementation</span>
+                                    <i className="fas fa-brain"></i>
+                                    <span>Machine Learning Model</span>
                                 </div>
                                 <div className={styles.example}>
                                     <i className="fas fa-file-alt"></i>
-                                    <span>Document processing automation</span>
+                                    <span>Document Automation</span>
+                                </div>
+                                <div className={styles.example}>
+                                    <i className="fas fa-comments"></i>
+                                    <span>NLP Integration</span>
+                                </div>
+                                <div className={styles.example}>
+                                    <i className="fas fa-chart-line"></i>
+                                    <span>Predictive Analytics</span>
+                                </div>
+                                <div className={styles.example}>
+                                    <i className="fas fa-image"></i>
+                                    <span>Computer Vision Solution</span>
+                                </div>
+                                <div className={styles.example}>
+                                    <i className="fas fa-cogs"></i>
+                                    <span>Process Automation</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className={styles.benefits}>
+                            <h4>Why Claim Your Free Trial?</h4>
+                            <div className={styles.benefitGrid}>
+                                <div className={styles.benefitItem}>
+                                    <i className="fas fa-trophy"></i>
+                                    <span>Proven Expertise</span>
+                                </div>
+                                <div className={styles.benefitItem}>
+                                    <i className="fas fa-clock"></i>
+                                    <span>Quick Turnaround</span>
+                                </div>
+                                <div className={styles.benefitItem}>
+                                    <i className="fas fa-hand-holding-dollar"></i>
+                                    <span>100% Free</span>
+                                </div>
+                                <div className={styles.benefitItem}>
+                                    <i className="fas fa-award"></i>
+                                    <span>Premium Quality</span>
                                 </div>
                             </div>
                         </div>
@@ -102,8 +154,9 @@ const FreeTrial = () => {
                         <div className={styles.quote}>
                             <i className="fas fa-quote-left"></i>
                             <p>
-                                "The free trial project gave us complete confidence in Aidaddy's capabilities.
-                                They delivered exactly what they promised, on time and with exceptional quality."
+                                "The free trial project gave us complete confidence in Kyvanta Innovations' capabilities.
+                                They delivered exactly what they promised, on time and with exceptional quality. We've since
+                                partnered with them for multiple AI initiatives."
                             </p>
                             <div className={styles.author}>
                                 <div className={styles.stars}>
@@ -113,7 +166,7 @@ const FreeTrial = () => {
                                     <i className="fas fa-star"></i>
                                     <i className="fas fa-star"></i>
                                 </div>
-                                <span>— Previous Trial Client</span>
+                                <span>— CTO, Leading Tech Company</span>
                             </div>
                         </div>
                     </div>
